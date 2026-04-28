@@ -1,0 +1,363 @@
+/* الأنماط الأساسية */
+.btn {
+  font-size: 0.85rem;
+  padding: 0.3rem 0.6rem;
+}
+
+.form-select {
+  font-size: 0.85rem;
+  padding: 0.3rem 0.6rem;
+  height: auto;
+}
+
+.week-btn {
+  font-size: 0.85rem;
+  padding: 0.3rem 0.6rem;
+}
+
+.bg-brown-custom {
+  background-color: #a0522d !important;
+  color: white;
+}
+
+.table td,
+.table th {
+  font-size: 0.9rem;
+  vertical-align: middle;
+  text-align: center;
+  min-width: 100px;
+  height: 40px;
+  padding: 8px;
+}
+
+.table tbody tr:last-child {
+  background-color: rgba(108, 117, 125, 0.25);
+}
+
+.dropdown-item {
+  font-size: 14px;
+  padding: 0.5rem 1rem;
+}
+
+/* ألوان الخلايا */
+.bg-event {
+  background-color: #b18e18 !important;
+  color: white;
+}
+
+.bg-leave {
+  background-color: #8ccf44 !important;
+  color: #2b2d42;
+}
+
+.bg-off {
+  background-color: #fcfa00 !important;
+  color: #2b2d42;
+}
+
+.bg-hours8 {
+  background-color: #a8d8ea !important;
+  color: #2b2d42;
+}
+
+.bg-hours14 {
+  background-color: #aa96da !important;
+  color: #2b2d42;
+}
+
+.bg-store {
+  background-color: #ff7043 !important;
+  color: white !important;
+}
+
+/* ألوان الخلايا في جدول التوزيع */
+.time-8.event,
+.time-14.event {
+  background-color: #b18e18 !important;
+  color: white;
+}
+
+.time-8.leave,
+.time-14.leave,
+.leave {
+  background-color: #8ccf44 !important;
+  color: #2b2d42;
+}
+
+.time-8.off,
+.time-14.off,
+.off {
+  background-color: #fcfa00 !important;
+  color: #2b2d42;
+}
+
+.time-8.hours8,
+.time-14.hours8 {
+  background-color: #a8d8ea !important;
+  color: #2b2d42;
+}
+
+.time-8.hours14,
+.time-14.hours14 {
+  background-color: #aa96da !important;
+  color: #2b2d42;
+}
+
+.time-8.store,
+.time-14.store,
+.store {
+  background-color: #ff7043 !important;
+  color: white !important;
+}
+
+/* تنسيق الجداول */
+.table-bordered {
+  border-color: #dee2e6;
+}
+
+.table-bordered td,
+.table-bordered th {
+  border-color: #dee2e6;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* تنسيق جدول الموظفين والمشرفين */
+#scheduleTableContainer table,
+#supervisorsTableContainer table {
+  background-color: white;
+  margin-bottom: 1rem;
+}
+
+#scheduleTableContainer th,
+#supervisorsTableContainer th {
+  background-color: var(--bs-table-bg) !important;
+  color: var(--bs-table-color) !important;
+  font-weight: bold;
+  border-bottom: 2px solid #dee2e6;
+}
+
+#scheduleTableContainer td,
+#supervisorsTableContainer td {
+  background-color: white;
+  transition: background-color 0.2s;
+}
+
+#scheduleTableContainer tr:hover td,
+#supervisorsTableContainer tr:hover td {
+  background-color: #f8f9fa;
+}
+
+/* تنسيق خاص للمشرفين */
+#supervisorsTableContainer th {
+  background-color: var(--bs-table-bg) !important;
+  border-top: 2px solid #dee2e6;
+}
+
+#supervisorsTableContainer tr:first-child td {
+  background-color: #f8f9fa;
+}
+
+/* تنسيق الأزرار */
+.table-action-btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  border-radius: 0.2rem;
+  margin: 0 0.1rem;
+}
+
+.btn-edit {
+  background-color: #8ccf44;
+  color: #2b2d42;
+  border: none;
+}
+
+.btn-delete {
+  background-color: #b18e18;
+  color: white;
+  border: none;
+}
+
+.btn-edit:hover {
+  background-color: #7ab833;
+  color: #2b2d42;
+}
+
+.btn-delete:hover {
+  background-color: #9a7b15;
+  color: white;
+}
+
+/* تنسيق جدول التوزيع */
+.table-primary {
+  --bs-table-bg: #cfe2ff;
+  --bs-table-color: #000;
+  --bs-table-border-color: #bacbe6;
+}
+
+#scheduleTableContainer table thead tr,
+#supervisorsTableContainer table thead tr {
+  background-color: var(--bs-table-bg) !important;
+  color: var(--bs-table-color) !important;
+}
+
+/* تنسيق عناوين الأيام */
+.table th.vertical-header {
+  vertical-align: middle;
+  text-align: center;
+  padding: 4px;
+  height: 80px;
+  min-width: 30px;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.table th.vertical-header .day-name {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.table th.vertical-header .date {
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 14px;
+  color: #000000;
+  height: 16px;
+}
+
+/* تنسيق الجداول */
+.table th {
+  font-size: 14px;
+  vertical-align: middle;
+  text-align: center;
+  padding: 8px;
+  height: 40px;
+}
+
+/* تنسيق عرض الأسبوع الواحد */
+#scheduleTableContainer:not(:has(.weeks-grid)),
+#supervisorsTableContainer:not(:has(.weeks-grid)) {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+#scheduleTableContainer:not(:has(.weeks-grid)) .table td,
+#scheduleTableContainer:not(:has(.weeks-grid)) .table th,
+#supervisorsTableContainer:not(:has(.weeks-grid)) .table td,
+#supervisorsTableContainer:not(:has(.weeks-grid)) .table th {
+  font-size: 0.9rem;
+}
+
+#scheduleTableContainer:not(:has(.weeks-grid)) table td:first-child,
+#supervisorsTableContainer:not(:has(.weeks-grid)) table td:first-child {
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+/* تنسيق الجداول في وضع عرض الكل فقط */
+#scheduleTableContainer:has(.weeks-grid) {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.5rem;
+}
+
+#scheduleTableContainer:has(.weeks-grid) .weeks-row {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+#scheduleTableContainer:has(.weeks-grid) .week-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+#scheduleTableContainer:has(.weeks-grid) .week-container {
+  width: 100%;
+  margin-bottom: 0.5rem;
+  page-break-inside: avoid;
+}
+
+#scheduleTableContainer:has(.weeks-grid) .week-title {
+  font-size: 0.9rem;
+  padding: 5px 10px;
+  margin-bottom: 0.5rem;
+  background-color: #0d6efd;
+  color: white;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: bold;
+}
+
+#scheduleTableContainer:has(.weeks-grid) table.table {
+  width: 100%;
+  margin-bottom: 0.25rem;
+}
+
+#scheduleTableContainer:has(.weeks-grid) table.table td,
+#scheduleTableContainer:has(.weeks-grid) table.table th {
+  font-size: 10px;
+  vertical-align: middle;
+  text-align: center;
+  min-width: 45px;
+  height: 22px;
+  padding: 1px;
+}
+
+#scheduleTableContainer:has(.weeks-grid) table.table th.vertical-header {
+  vertical-align: middle;
+  text-align: center;
+  padding: 1px;
+  height: 40px;
+  min-width: 15px;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#scheduleTableContainer:has(.weeks-grid) table.table th.vertical-header .day-name {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin: 3px;
+  font-size: 9px;
+}
+
+#scheduleTableContainer:has(.weeks-grid) table.table th.vertical-header .date {
+  position: absolute;
+  bottom: 1px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 9px;
+  color: #000000;
+  height: 8px;
+  margin: 2px;
+} 

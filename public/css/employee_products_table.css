@@ -1,0 +1,347 @@
+/* التصميم العام */
+:root {
+    --primary-color: #4361ee;
+    --secondary-color: #3a0ca3;
+    --success-color: #4cc9f0;
+    --danger-color: #f72585;
+    --warning-color: #f8961e;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --text-color: #2b2d42;
+    --border-color: #dee2e6;
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* التصميم العام للبطاقات */
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+/* رأس التطبيق */
+.app-header {
+    margin-bottom: 20px;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.page-title {
+    color: var(--secondary-color);
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* فلترات البحث المدمجة */
+.search-filters {
+    margin-bottom: 15px;
+}
+
+.filter-header {
+    font-weight: bold;
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: var(--secondary-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 150px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* عناصر التحكم في النماذج */
+.form-control {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.1);
+}
+
+/* الأزرار مع تأثيرات */
+.btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-search {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.btn-search:hover {
+    background-color: #38b6db;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-search:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-reset {
+    background-color: var(--warning-color);
+    color: white;
+}
+
+.btn-reset:hover {
+    background-color: #e07c0c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-reset:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* الجدول */
+.table-container {
+    overflow: hidden;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.data-table th {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 12px;
+    text-align: right;
+    font-weight: 500;
+    position: relative;
+}
+
+.data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.data-table tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.data-table tr:hover {
+    background-color: #e3f2fd;
+}
+
+.product-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-name {
+    font-weight: 500;
+    margin-bottom: 3px;
+}
+
+.product-serial {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+/* أيقونات الفرز */
+.sort-icon {
+    margin-right: 5px;
+    font-size: 12px;
+    opacity: 0.7;
+    transition: var(--transition);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.sort-icon:hover {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.sort-icon.active {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* أزرار الإجراءات مع تأثيرات */
+.action-buttons {
+    display: flex;
+    gap: 6px;
+}
+
+.action-btn {
+    padding: 6px 10px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    color: white;
+    font-size: 13px;
+    min-width: 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn i {
+    margin-left: 5px;
+}
+
+.btn-confirm {
+    background-color: #28a745;
+}
+
+.btn-confirm:hover {
+    background-color: #218838;
+}
+
+.btn-return {
+    background-color: #dc3545;
+}
+
+.btn-return:hover {
+    background-color: #c82333;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 30px 15px;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 40px;
+    margin-bottom: 10px;
+    color: #adb5bd;
+}
+
+.empty-state p {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+/* التصميم للجوال */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .filter-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .filter-group {
+        width: 100%;
+    }
+    
+    .filter-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .data-table {
+        font-size: 13px;
+    }
+    
+    .data-table th, 
+    .data-table td {
+        padding: 8px 10px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .action-btn {
+        width: 100%;
+        padding: 5px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 20px;
+    }
+}
