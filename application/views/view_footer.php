@@ -10,12 +10,20 @@
 <script>
 function search() {
   var input = document.getElementById("Search");
+  if (!input) {
+    return;
+  }
+
+  if (window.AdminTablePagination && window.AdminTablePagination.updateFromInput(input)) {
+    return;
+  }
+
   var filter = input.value.toLowerCase();
   var nodes = document.getElementsByClassName('products-row');
 
   for (i = 0; i < nodes.length; i++) {
     if (nodes[i].innerText.toLowerCase().includes(filter)) {
-      nodes[i].style.display = "flex";
+      nodes[i].style.display = "";
     } else {
       nodes[i].style.display = "none";
     }

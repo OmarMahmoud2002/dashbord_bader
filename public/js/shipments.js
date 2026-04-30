@@ -44,6 +44,10 @@ $('.show-btn').click((event) => {
 
 function search_by_pack_number() {
     let inpt_element = document.querySelector('#SearchPack')
+    if (window.AdminTablePagination && window.AdminTablePagination.updateFromInput(inpt_element)) {
+        return;
+    }
+
     let inpt_text = inpt_element.value.toUpperCase();
     
     var nodes = document.getElementsByClassName('products-row');
@@ -51,7 +55,7 @@ function search_by_pack_number() {
     for (i = 0; i < nodes.length; i++) {
         packs = nodes[i].getAttribute('data-packs')
         if (packs.includes(inpt_text) || nodes[i].innerText.toUpperCase().includes(inpt_text)) {
-            nodes[i].style.display = "flex";
+            nodes[i].style.display = "";
         } else {
             nodes[i].style.display = "none";
         }

@@ -1,7 +1,7 @@
 <?php $this->view('view_header'); ?>
   <style>
-        .app-content-actions {
-            margin-bottom: 250px;
+        .admin-ui-upload-form .app-content-actions {
+            margin-bottom: 20px;
         }
 
         .stockd {
@@ -82,13 +82,13 @@ $CI->load->model('Excel_import_model');
 
 	<?php $this->view('view_admin_sidebar'); ?>
 
-     <div class="app-content">
+     <div class="app-content admin-ui-page admin-ui-upload-form">
       <div class="app-content-header">
 
         <h1 class="app-content-headerText">مبيعات تواصل  </h1>
         
       </div>
-      <div style="margin-bottom:250px" class="app-content-actions">
+      <div class="app-content-actions upload-form-actions">
         <?php echo form_open_multipart(base_url().MOD_VALUE.'excel_import/import',array('class' => 'form-horizontal')); ?>
 
       <div class="stockd">

@@ -4,9 +4,63 @@ $(".popup .popup-content .title .close").click(()=>{
 })
 
 // Menu
-$(".toggle_menu").click(function(){
-  $(".sidebar").toggleClass("active")
+function isAdminSidebarMobile() {
+  return window.matchMedia("(max-width: 1020px)").matches;
+}
+
+function syncAdminSidebarToggleLabel() {
+  const collapsed = $("body").hasClass("sidebar-collapsed");
+  $(".toggle_menu").attr({
+    role: "button",
+    tabindex: "0",
+    title: collapsed ? "فتح القائمة" : "إغلاق القائمة",
+    "aria-label": collapsed ? "فتح القائمة" : "إغلاق القائمة"
+  });
+}
+
+function restoreAdminSidebarState() {
+  if (isAdminSidebarMobile()) {
+    $("body").removeClass("sidebar-collapsed");
+    syncAdminSidebarToggleLabel();
+    return;
+  }
+
+  if (window.localStorage && localStorage.getItem("adminSidebarCollapsed") === "1") {
+    $("body").addClass("sidebar-collapsed");
+  }
+
+  $(".sidebar").removeClass("active");
+  syncAdminSidebarToggleLabel();
+}
+
+restoreAdminSidebarState();
+
+$(".toggle_menu").click(function(e){
+  e.stopPropagation();
+
+  if (isAdminSidebarMobile()) {
+    $("body").removeClass("sidebar-collapsed");
+    $(".sidebar").toggleClass("active");
+  } else {
+    $(".sidebar").removeClass("active");
+    $("body").toggleClass("sidebar-collapsed");
+
+    if (window.localStorage) {
+      localStorage.setItem("adminSidebarCollapsed", $("body").hasClass("sidebar-collapsed") ? "1" : "0");
+    }
+  }
+
+  syncAdminSidebarToggleLabel();
 })
+
+$(".toggle_menu").keydown(function(e){
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    $(this).trigger("click");
+  }
+})
+
+$(window).on("resize", restoreAdminSidebarState);
 
 // Notifications
 $('.del-notification').click((event) => {

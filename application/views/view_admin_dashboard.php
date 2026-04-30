@@ -2,7 +2,7 @@
 <title>الرئيسية</title>
 <?php $this->view('view_admin_sidebar'); ?>
 
-<link rel="stylesheet" href = "/public/css/dashboard.css" />
+<link rel="stylesheet" href="<?php echo base_url(); ?>public/css/dashboard.css?a=<?php $date=date_create();echo date_timestamp_get($date);?>" />
 
 <div class = 'app-content'>
     <header class="modern-header py-4">
@@ -140,7 +140,15 @@
 
                 <div class="table-responsive">
                     <?php if ($items): ?>
-                        <table class="table table-striped">
+                        <table class="table table-striped modern-table products-table">
+                            <colgroup>
+                                <col class="products-col-index">
+                                <col class="products-col-name">
+                                <col class="products-col-code">
+                                <col class="products-col-category">
+                                <col class="products-col-last-updated">
+                                <col class="products-col-quantity">
+                            </colgroup>
 
                             <thead class="table-header table-dark">
                                 <tr>
@@ -187,6 +195,14 @@
                                             <?php else: ?>
                                                 <i class="bi bi-arrow-down-up inactive-arrow"></i>
                                             <?php endif; ?>
+                                        </a>
+                                    </th>
+
+                                    <!-- آخر تحديث -->
+                                    <th>
+                                        <a class="sortable-link" href="javascript:void(0)" aria-disabled="true">
+                                            <span>آخر تحديث</span>
+                                            <i class="bi bi-arrow-down-up inactive-arrow"></i>
                                         </a>
                                     </th>
 
@@ -241,6 +257,12 @@
                                             <span class="w-100 category-badge text-dark">
                                                 <i class="bi bi-tag-fill me-1"></i>
                                                 <?= htmlspecialchars($row['item_category']) ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="w-100 last-updated-badge text-dark">
+                                                <i class="bi bi-calendar3 me-1"></i>
+                                                --/--/----
                                             </span>
                                         </td>
                                         <td>

@@ -297,6 +297,36 @@ body {
     min-width: 600px;
 }
 
+.products-table {
+    width: 100%;
+    min-width: 1120px;
+    table-layout: fixed;
+}
+
+.products-table .products-col-index {
+    width: 72px;
+}
+
+.products-table .products-col-name {
+    width: auto;
+}
+
+.products-table .products-col-code {
+    width: 239px;
+}
+
+.products-table .products-col-category {
+    width: 185px;
+}
+
+.products-table .products-col-last-updated {
+    width: 150px;
+}
+
+.products-table .products-col-quantity {
+    width: 101px;
+}
+
 .modern-table thead th {
     background: var(--text-primary);
     color: white;
@@ -324,6 +354,32 @@ body {
     vertical-align: middle;
     border: none;
     white-space: nowrap;
+}
+
+.products-table th,
+.products-table td {
+    overflow: hidden;
+}
+
+.products-table th:first-child,
+.products-table td:first-child {
+    text-align: center;
+}
+
+.products-table th:nth-child(2),
+.products-table td:nth-child(2) {
+    text-align: right;
+}
+
+.products-table th:nth-child(3),
+.products-table td:nth-child(3),
+.products-table th:nth-child(4),
+.products-table td:nth-child(4),
+.products-table th:nth-child(5),
+.products-table td:nth-child(5),
+.products-table th:nth-child(6),
+.products-table td:nth-child(6) {
+    text-align: center;
 }
 
 .row-number {
@@ -354,6 +410,18 @@ body {
     white-space: normal !important;
 }
 
+.products-table .product-link {
+    justify-content: flex-start;
+}
+
+.products-table .category-badge,
+.products-table .quantity-badge,
+.products-table .quantity-badge-danger,
+.products-table .last-updated-badge {
+    width: 100%;
+    justify-content: center;
+}
+
 
 .product-link:hover {
     color: #667eea;
@@ -369,6 +437,20 @@ body {
     font-weight: 600;
     display: inline-flex;
     align-items: center;
+}
+
+.last-updated-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+    border: 1px solid #bfdbfe;
+    color: #1e293b;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
 }
 
 .quantity-badge, .quantity-badge-danger {

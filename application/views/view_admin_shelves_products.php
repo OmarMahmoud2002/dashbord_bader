@@ -2,7 +2,7 @@
 <?php $this->load->view('view_header'); ?>
 <?php $this->load->view('view_admin_sidebar'); ?>
 
-<div class = 'app-content' >
+<div class = 'app-content admin-ui-page admin-ui-shelves' >
     <div class = 'app-content-header'>
         <h1 class = 'app-content-headerText'>منتجات رف <span><?=$shelf->shelf_number?></span></h1>
         
@@ -17,6 +17,7 @@
             <div class="product-cell quantity">الكمية</div>
             <div class="product-cell actions"></div>
         </div>
+        <?php if ($items) { ?>
         <?php foreach ($items as $item) { ?>
             <?php 
             if ($this->Custodys->check_for_serial($item['serial_number'])) {
@@ -34,6 +35,12 @@
                 <div class="product-cell actions">
                     <button class = 'del-btn'>ازالة من الرف</button>
                 </div>
+            </div>
+        <?php } ?>
+        <?php } else { ?>
+            <div class="empty-admin-state">
+                <i class="bi bi-inbox"></i>
+                <div>لا توجد منتجات في هذا الرف</div>
             </div>
         <?php } ?>
     </div>

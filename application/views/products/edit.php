@@ -3,7 +3,7 @@
 
 <link rel='stylesheet' href='<?= base_url('/public/css/edit_product.css') ?>'>
 
-<div class = 'app-content'>
+<div class = 'app-content admin-ui-page admin-ui-product-form'>
     <div class="hero-header">
         <div class="container">
             <div class="row align-items-center">

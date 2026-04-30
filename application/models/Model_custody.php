@@ -2,6 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Model_custody extends CI_Model {
+    protected $table;
 
     public function __construct()
     {

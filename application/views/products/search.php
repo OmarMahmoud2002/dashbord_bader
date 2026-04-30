@@ -27,17 +27,21 @@
 
 </style>
 
-<div class = 'app-content'>
+<div class = 'app-content admin-ui-page admin-ui-product-search'>
     <div class = 'app-content-header'>
         <h1 class = 'app-content-headerText'>البحث عن منتج</h1>
     </div>
     <div class="prod_form">
-        <form class = 'formTag'>
-          <h1>مطابقة رقم التحقق</h1>
+        <form class = 'formTag product-search-card'>
+          <div class="search-card-intro">
+            <span class="search-card-icon" aria-hidden="true"><i class="bi bi-upc-scan"></i></span>
+            <h1>مطابقة رقم التحقق</h1>
+            <p>يرجى إدخال الرقم التسلسلي أو رقم الصنف للتحقق من عملية المطابقة.</p>
+          </div>
           <div class = 'top_part' >
             <button type = 'button' id = 'startOverBtn'>البدء من جديد</button>
-            <div class="cart">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M253.3 35.1c6.1-11.8 1.5-26.3-10.2-32.4s-26.3-1.5-32.4 10.2L117.6 192H32c-17.7 0-32 14.3-32 32s14.3 32 32 32L83.9 463.5C91 492 116.6 512 146 512H430c29.4 0 55-20 62.1-48.5L544 256c17.7 0 32-14.3 32-32s-14.3-32-32-32H458.4L365.3 12.9C359.2 1.2 344.7-3.4 332.9 2.7s-16.3 20.6-10.2 32.4L404.3 192H171.7L253.3 35.1zM192 304v96c0 8.8-7.2 16-16 16s-16-7.2-16-16V304c0-8.8 7.2-16 16-16s16 7.2 16 16zm96-16c8.8 0 16 7.2 16 16v96c0 8.8-7.2 16-16 16s-16-7.2-16-16V304c0-8.8 7.2-16 16-16zm128 16v96c0 8.8-7.2 16-16 16s-16-7.2-16-16V304c0-8.8 7.2-16 16-16s16 7.2 16 16z"></path></svg>
+            <div class="cart" title="سلة المنتجات" aria-label="سلة المنتجات">
+              <i class="bi bi-basket2" aria-hidden="true"></i>
               <?php 
               $count = count($cart);
               if ($count > 0) {
@@ -86,7 +90,7 @@
                           <span>الرف:</span>
                           <span><?=$shelf?></span>
                         </p>
-                        <p>
+                        <div class="cart-verify">
                             <div class="image-container">
                                 <svg class="toggle-input-image" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round"
                                     stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -94,13 +98,11 @@
                                     d="m22 5c0-.478-.379-1-1-1h-18c-.62 0-1 .519-1 1v14c0 .621.52 1 1 1h18c.478 0 1-.379 1-1zm-18.5.5h17v13h-17zm5.5 2c0-.276-.224-.5-.5-.5s-.5.224-.5.5v9c0 .276.224.5.5.5s.5-.224.5-.5zm8 0c0-.276-.224-.5-.5-.5s-.5.224-.5.5v9c0 .276.224.5.5.5s.5-.224.5-.5zm2 0c0-.276-.224-.5-.5-.5s-.5.224-.5.5v9c0 .276.224.5.5.5s.5-.224.5-.5zm-13.25-.5c-.414 0-.75.336-.75.75v8.5c0 .414.336.75.75.75s.75-.336.75-.75v-8.5c0-.414-.336-.75-.75-.75zm5.5 0c-.414 0-.75.336-.75.75v8.5c0 .414.336.75.75.75s.75-.336.75-.75v-8.5c0-.414-.336-.75-.75-.75zm3-.013c-.414 0-.75.336-.75.75v8.5c0 .414.336.75.75.75s.75-.336.75-.75v-8.5c0-.414-.336-.75-.75-.75z"
                                     fill-rule="nonzero" />
                                 </svg>
-                                <!-- Input Field -->
                                 <input type="text" class="toggle-input-field" placeholder="ادخل رقم السريال">
-                                <!-- Verification Result -->
                                 <span class="verification-result correct">✔</span>
                                 <span class="verification-result incorrect">✖</span>
                             </div>
-                        </p>
+                        </div>
                     </div>
                     </div>
                     <div class="options-item">
@@ -112,7 +114,7 @@
             <?php } ?>
             <div class="select-all-container">
                 <input type="checkbox" id="selectAllCheckbox" onchange="toggleAllSelections(this)">
-                <label for="selectAllCheckbox">Select All</label>
+                <label for="selectAllCheckbox">تحديد الكل</label>
             </div>
           </div>
           <ul class="list">
@@ -165,10 +167,16 @@
               <button type="button" id="newCheckBtn" class="hide">تحقق</button>
               <button type="button" id="newDeliveryBtn" class="hide">تسليم الجهاز</button>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
         <div class="prod_infos hide">
-          <h1>تفاصيل المنتج</h1>
+          <div class="product-details-head">
+            <span class="product-details-icon" aria-hidden="true"><i class="bi bi-box-seam"></i></span>
+            <div>
+              <h1>تفاصيل المنتج</h1>
+              <p>بيانات المنتج المرتبطة بنتيجة البحث الحالية</p>
+            </div>
+          </div>
           <div class="cnts">
             <table class="prod_info">
               <tbody><tr>
@@ -201,8 +209,8 @@
                 <td id = 'poster_number'></td>
               </tr>
             </tbody></table>
-            <a id = 'product_image' href="" data-fancybox data-caption>
-              <img src="" alt="product image">
+            <a id = 'product_image' class="product-image-preview" href="" data-fancybox data-caption>
+              <img src="" alt="صورة المنتج">
             </a>
           </div>
         </div>

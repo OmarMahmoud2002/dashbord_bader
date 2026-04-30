@@ -2,6 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Model_variables extends CI_Model {
+    protected $table;
     
     function __construct() {
         parent::__construct();

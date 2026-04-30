@@ -2,6 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Model_settings extends CI_Model {
+    protected $table;
     function __construct() {
         parent::__construct();
         $this->table = 'tbl_settings';

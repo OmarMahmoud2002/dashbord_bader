@@ -7,7 +7,7 @@ $CI->load->model('Model_admin');
 
 	<?php $this->view('view_admin_sidebar'); ?>
 
-     <div class="app-content">
+     <div class="app-content admin-ui-page admin-ui-people">
       <div class="app-content-header">
 
         <h1 class="app-content-headerText">الموظفين</h1>
@@ -24,6 +24,7 @@ $CI->load->model('Model_admin');
           <div class="product-cell actions">اجراء</div>
         </div>
         	<?php
+      if ($employees) {
 			$i=0;
 			foreach ($employees as $row) {
 				$i++;
@@ -58,7 +59,13 @@ $CI->load->model('Model_admin');
       </div>
         <?php
 							}
+      } else {
 							?>
+        <div class="empty-admin-state">
+          <i class="bi bi-people"></i>
+          <div>لا يوجد موظفين</div>
+        </div>
+      <?php } ?>
       </div>
       <!-- Add Employee -->
       <div class="popup popup-add-employee">

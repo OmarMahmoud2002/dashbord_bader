@@ -13,7 +13,7 @@
   <div class="app-content-actions">
     <input id = 'SearchPack' onkeyup = 'search_by_pack_number()' class="search-bar" placeholder="بحث" type="text">
   </div>
-  <div class="products-area-wrapper tableView">
+  <div id="shipmentsTable" class="products-area-wrapper tableView">
     <div class="products-header">
       <div class="product-cell ship_num">رقم الشحنة</div>
       <div class="product-cell nums">عدد الأكياس</div>
@@ -32,6 +32,7 @@
         </div>
     <?php } ?>
   </div>
+  <div class="admin-table-pagination" data-admin-table-pagination data-target="#shipmentsTable" data-search="#SearchPack" data-page-size="20"></div>
   <!-- Add Shipment -->
   <div class="popup popup-add-shipment">
     <div class="add_task-content popup-content">
@@ -99,6 +100,7 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
 <script src="<?php echo base_url(); ?>public/js/script.js?a=<?php $date=date_create();echo date_timestamp_get($date);?>"></script>
+<script src="<?php echo base_url(); ?>public/js/admin-table-pagination.js?a=<?php $date=date_create();echo date_timestamp_get($date);?>"></script>
 <script src="<?php echo base_url(); ?>public/js/shipments.js?a=<?php $date=date_create();echo date_timestamp_get($date);?>"></script>
 
 <?php $this->load->view('view_footer'); ?>

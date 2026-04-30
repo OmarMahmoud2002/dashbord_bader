@@ -5,7 +5,7 @@
 
 <link href="<?= base_url('/public/css/add.css') ?>" rel="stylesheet">
 
-<div class = 'app-content'>
+<div class = 'app-content admin-ui-page admin-ui-product-form admin-ui-form-shell'>
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary shadow-lg">
         <div class="container">
@@ -15,6 +15,10 @@
             </a>
         </div>
     </nav>
+
+    <div class="app-content-header">
+        <h1 class="app-content-headerText">رفع ملف Excel للمخزون</h1>
+    </div>
 
     <!-- Main Content -->
     <div class="container my-5">

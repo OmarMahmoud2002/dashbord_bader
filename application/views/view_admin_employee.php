@@ -10,7 +10,7 @@ $CI->load->model('Model_admin');
 	<?php $this->view('view_admin_sidebar'); ?>
 
   
-  <div class="app-content">
+  <div class="app-content admin-ui-page admin-ui-people">
     <?php 
     if($employee){
       ?>  

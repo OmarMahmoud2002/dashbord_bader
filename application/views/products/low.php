@@ -2,7 +2,7 @@
 <?php $this->load->view('view_header'); ?>
 <?php $this->load->view('view_admin_sidebar');?>
 
-<div class="app-content">
+<div class="app-content admin-ui-page admin-ui-low">
   <div class="app-content-header">
     <h1 class="app-content-headerText">المنتجات منخفضة الكمية</h1>
   </div>
@@ -17,6 +17,7 @@
           <div class="product-cell last_updated">أخر تحديث</div>
           <div class="product-cell actions"></div>
         </div>
+        <?php if ($low_products) { ?>
         <?php foreach ($low_products as $product) { ?>
             <div class = 'products-row' id = '<?=$product['id']?>'>
                 <div class = 'product-cell image'>
@@ -27,8 +28,15 @@
                 <div class = 'product-cell category'><span class="cell-label">تصنيف المنتج</span><?=$product['item_category']?></div>
                 <div class = 'product-cell last_updated'><span class="cell-label">آخر تحديث</span><?=$product['updated_at']?></div>
                 <div class="product-cell actions">
+                  <span class="low-stock-badge"><i class="bi bi-exclamation-triangle"></i> منخفض</span>
                 </div>
             </div>
+        <?php } ?>
+        <?php } else { ?>
+          <div class="empty-admin-state">
+            <i class="bi bi-inbox"></i>
+            <div>لا توجد منتجات منخفضة الكمية</div>
+          </div>
         <?php } ?>
     </div>
 </div>

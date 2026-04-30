@@ -47,15 +47,11 @@ function send_change_request() {
 }
 
 $('.del-btn').click((event) => {
-    if (confirm('هل تريد حذف الرف؟')) {
-        id = $(event.target).parent().parent().attr('id')
-        $.ajax({
-            url: './shelves/delete_shelf?id=' + id,
-            type: 'get',
-            success: (data) => {
-                window.location = window.location.href;
-            }
-        })
-    }
-    
+    let row = $(event.target).closest('.products-row');
+    let id = row.attr('id');
+    let shelfNumber = row.find('.product-cell.num').clone().children().remove().end().text().trim();
+
+    $('#deleteShelfNumber').val(shelfNumber);
+    $('#confirmDeleteShelf').attr('href', './shelves/delete_shelf?id=' + id);
+    $('.popup-delete-shelf').fadeIn(200);
 })

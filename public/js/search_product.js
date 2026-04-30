@@ -8,6 +8,7 @@ let startOverBtn = document.getElementById("startOverBtn");
 let deliveryBtn = document.getElementById("deliveryBtn");
 let delivery_btn = document.getElementsByClassName("delivery_btn");
 let prod_infos = document.querySelector(".prod_infos");
+let prod_form = document.querySelector(".admin-ui-product-search .prod_form");
 let select_type = document.querySelector(".select_type");
 let radios_enabled = false
 let radios = [];
@@ -24,6 +25,19 @@ const main_url = window.location.origin
 
 
 serialNumber.focus()
+
+function sync_product_search_layout() {
+    if (!prod_form || !prod_infos) return;
+    prod_form.classList.toggle('has-result', !prod_infos.classList.contains('hide'));
+}
+
+if (prod_form && prod_infos) {
+    sync_product_search_layout();
+    new MutationObserver(sync_product_search_layout).observe(prod_infos, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+}
 
 function set_data(data) {
     var image_path = "/public/img/products/" + 'default_product_image.png';

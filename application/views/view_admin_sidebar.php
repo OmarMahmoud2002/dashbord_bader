@@ -5,6 +5,45 @@ $segment_2 = $CI->uri->segment('2');
 $segment_3 = 0;
 $segment_3 = $CI->uri->segment('3');
 ?>
+<link rel="stylesheet" href="<?php echo base_url(); ?>public/css/admin-ui-pattern.css?a=<?php $date=date_create();echo date_timestamp_get($date);?>">
+<script>
+  var adminUiPath = window.location.pathname;
+  document.body.classList.add('admin-ui-shell');
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var content = document.querySelector('.app-content');
+    if (!content) return;
+
+    content.classList.add('admin-ui-page');
+
+    var path = adminUiPath;
+    if (path.indexOf('/products/low') !== -1) content.classList.add('admin-ui-low');
+    if (path.indexOf('/products/search') !== -1) content.classList.add('admin-ui-product-search');
+    if (path.indexOf('/shelves') !== -1) content.classList.add('admin-ui-shelves');
+    if (path.indexOf('/employees') !== -1 || path.indexOf('/employee/') !== -1) content.classList.add('admin-ui-people');
+    if (path.indexOf('/employees_timetable') !== -1) content.classList.add('admin-ui-timetable');
+    if (path.indexOf('/employees_sales') !== -1) content.classList.add('admin-ui-employee-sales');
+    if (path.indexOf('/admins') !== -1) content.classList.add('admin-ui-admins');
+    if (path.indexOf('/products/add') !== -1 || path.indexOf('/products/edit') !== -1 || path.indexOf('/upload') !== -1) {
+      content.classList.add('admin-ui-product-form');
+    }
+
+    document.querySelectorAll('.admin-ui-page .products-area-wrapper .actions button, .admin-ui-page .products-area-wrapper .actions a').forEach(function (action) {
+      var label = action.textContent.replace(/\s+/g, ' ').trim();
+
+      if (!label) {
+        if (action.classList.contains('del-btn') || action.closest('.del-btn')) label = 'حذف';
+        else if (action.classList.contains('edit-btn') || action.classList.contains('valid-btn')) label = 'تعديل';
+        else if (action.classList.contains('show-btn') || action.closest('.show-btn')) label = 'عرض';
+        else if (action.classList.contains('add-tswya')) label = 'تسوية';
+        else label = 'إجراء';
+      }
+
+      action.setAttribute('title', label);
+      action.setAttribute('aria-label', label);
+    });
+  });
+</script>
          <!-- HTML -->
   <nav>
     <div class="profile">

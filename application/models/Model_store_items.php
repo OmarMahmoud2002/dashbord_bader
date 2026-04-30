@@ -4,6 +4,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Model_store_items extends CI_Model
 {
+    protected $table;
+    protected $shelves_table;
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -41,8 +44,12 @@ class Model_store_items extends CI_Model
 	}
 
     public function get_store_items_per_page(
-        $limit, $start, $sortColumn = 'item_description',
-        $sortOrder = 'ASC', $searchCategory, $searchName
+        $limit,
+        $start,
+        $sortColumn = 'item_description',
+        $sortOrder = 'ASC',
+        $searchCategory = '',
+        $searchName = ''
     ) {
         // جلب البيانات مع تجميع العدد - CodeIgniter Query Builder (PHP 5.6 compatible)
         $this->db->select("

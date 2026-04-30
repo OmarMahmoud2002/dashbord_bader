@@ -33,12 +33,12 @@ $CI->load->model('Excel_import_model');
 <?php
 //print_r($excel);
 ?>
-    <div class="app-content">
+    <div class="app-content admin-ui-page admin-ui-settlements">
     <div class="app-content-header">
       <h1 class="app-content-headerText">الفروقات</h1>
     </div>
-    <div class="app-content-actions" style="display:none">
-      <input class="search-bar" placeholder="اسم الموظف" type="text">
+    <div class="app-content-actions">
+      <input id="Search" onkeyup="search()" class="search-bar" placeholder="اسم الموظف" type="text">
       <input type="text" class="search-bar" name="dates">
       <div class="app-content-actions-wrapper">
         <button class="action-button list active" title="List View">
@@ -49,7 +49,7 @@ $CI->load->model('Excel_import_model');
         </button>
       </div>
     </div>
-    <div class="products-area-wrapper tableView">
+    <div id="settlementsTable" class="products-area-wrapper tableView">
       <div class="products-header">
         <div class="product-cell name">الاسم</div>
         <div class="product-cell date">تاريخ</div>
@@ -117,7 +117,7 @@ $CI->load->model('Excel_import_model');
                 <button class="btn add-tswya" onclick="tswya(this, <?php echo $total_amount; ?>, <?php echo ($cash_amount + $network_amount); ?>, '<?php echo date_format(date_create($row['insert_excel_date']), 'Y-m-d'); ?>')" data-total="<?php echo number_format($total_amount, 2); ?>">تسوية</button>
               </div>
             </div>
-          <?
+          <?php
           }
         }
       }
@@ -125,6 +125,7 @@ $CI->load->model('Excel_import_model');
       ?>
 
     </div>
+    <div class="admin-table-pagination" data-admin-table-pagination data-target="#settlementsTable" data-search="#Search" data-page-size="20"></div>
     
     <!-- Tswya -->
     <div class="popup popup-Tswya">
@@ -185,6 +186,7 @@ $CI->load->model('Excel_import_model');
   <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
   <script  src="<?php echo base_url(); ?>public/js/script.js?a=<?php $date=date_create();echo date_timestamp_get($date);?>"></script>
+  <script  src="<?php echo base_url(); ?>public/js/admin-table-pagination.js?a=<?php $date=date_create();echo date_timestamp_get($date);?>"></script>
   <script  src="<?php echo base_url(); ?>public/js/home.js?a=<?php $date=date_create();echo date_timestamp_get($date);?>"></script>
 
    

@@ -8,7 +8,18 @@ $(".products-row .actions .add-oh").click(()=>{
   $(".popup-add-ohda").fadeIn(200)
 })
 
-$('.del-btn').click(() => {
+$(document).on('click', '[data-target]', (event) => {
+    let target = $(event.currentTarget).attr('data-target');
+    if (target) {
+        $(target).fadeIn(200);
+    }
+})
+
+$('.del-btn').click((event) => {
+    if ($(event.target).closest('.d').length === 0) {
+        return;
+    }
+
     let main_url = window.location.origin
     let user_custody_id = $(event.target).closest('.d').attr('id');
     $.post(main_url + '/admin/products/remove_custody', {'custody_id' : user_custody_id}, (data) => {
