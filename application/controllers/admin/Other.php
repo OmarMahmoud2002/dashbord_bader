@@ -422,19 +422,39 @@ class Other extends MY_Controller {
 		    redirect(base_url());
 		}
 
+        $this->Shipments->ensure_delivery_date_column();
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $actionRequested = $this->input->post('action');
             if ($actionRequested == 'add_shipment') {
+                $packs = $this->input->post('packs');
+                if (!is_array($packs)) {
+                    $packs = [];
+                }
+
                 $rowData = [
                     'shipment_number' => strtoupper($this->input->post('shipment_number')),
                     'packs_number' => $this->input->post('packs_number'),
-                    'packs' => strtoupper(json_encode($this->input->post('packs[]'))),
+                    'packs' => strtoupper(json_encode($packs)),
                     'date_created' => date('Y-m-d H:i:s A'),
                 ];
 
                 $msg = $this->Shipments->add_shipment($rowData);
                 if ($msg['status'] == 'wrong') {
                     $this->session->set_flashdata('error', $msg['description']);
+                } else {
+                    $this->session->set_flashdata('success', 'تمت إضافة الشحنة');
+                }
+            } else if ($actionRequested == 'deliver_shipment') {
+                $msg = $this->Shipments->deliver_shipment(
+                    $this->input->post('shipment_identifier'),
+                    $this->input->post('delivery_date')
+                );
+
+                if ($msg['status'] == 'wrong') {
+                    $this->session->set_flashdata('error', $msg['description']);
+                } else {
+                    $this->session->set_flashdata('success', $msg['description']);
                 }
             }
         }
@@ -449,6 +469,14 @@ class Other extends MY_Controller {
             $this->Shipments->delete_shipment($id);
         }
     }
+
+	function forms() {
+		if(!in_array($this->session->userdata('user_id'), $this->get_admins())) {
+		    redirect(base_url());
+		}
+
+		$this->load->view('view_admin_forms', $this->data);
+	}
 
 
 	function settings() {

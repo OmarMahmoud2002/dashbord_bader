@@ -19,7 +19,9 @@ $segment_3 = $CI->uri->segment('3');
     var path = adminUiPath;
     if (path.indexOf('/products/low') !== -1) content.classList.add('admin-ui-low');
     if (path.indexOf('/products/search') !== -1) content.classList.add('admin-ui-product-search');
+    if (path.indexOf('/shipments') !== -1) content.classList.add('admin-ui-shipments');
     if (path.indexOf('/shelves') !== -1) content.classList.add('admin-ui-shelves');
+    if (path.indexOf('/lock-track') !== -1) content.classList.add('admin-ui-lock-track');
     if (path.indexOf('/employees') !== -1 || path.indexOf('/employee/') !== -1) content.classList.add('admin-ui-people');
     if (path.indexOf('/employees_timetable') !== -1) content.classList.add('admin-ui-timetable');
     if (path.indexOf('/employees_sales') !== -1) content.classList.add('admin-ui-employee-sales');
@@ -104,104 +106,110 @@ $segment_3 = $CI->uri->segment('3');
       <ul class="sidebar-list">
         <li class="sidebar-list-item <?php if($segment_2 == 'products' && $segment_3 == 'search') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/products/search'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-bag"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <i class="bi bi-search"></i>
             <span>البحث عن منتج</span>
           </a>
         </li>
         <li class="sidebar-list-item <?php if($segment_2 == 'dashboard') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/dashboard'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-bag"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <i class="bi bi-box-seam"></i>
             <span>المنتجات</span>
           </a>
         </li>
         <li class="sidebar-list-item <?php if($segment_3 == 'low' && $segment_2 == 'products') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/products/low'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-bag"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <i class="bi bi-exclamation-triangle"></i>
             <span>المنتجات منخفضة الكمية</span>
           </a>
         </li>
         <li class="sidebar-list-item <?php if($segment_3 == 'operations' && $segment_2 == 'products') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/products/operations'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-bag"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <i class="bi bi-clock-history"></i>
             <span>العمليات</span>
           </a>
         </li>
         <li class="sidebar-list-item <?php if($segment_2 == 'shelves') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/shelves'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+            <i class="bi bi-archive"></i>
             <span>الرف</span>
           </a>
         </li>
         <li class="sidebar-list-item <?php if($segment_2 == 'employees') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/employees'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-pie-chart"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+            <i class="bi bi-people"></i>
             <span>الموظفين</span>
           </a>
         </li>
         <li class="sidebar-list-item <?php if($segment_2 == 'employees_sales_page') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/employees_sales_page'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-pie-chart"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+            <i class="bi bi-cash-coin"></i>
             <span>مبيعات الموظفين</span>
           </a>
         </li>
         <li class="sidebar-list-item <?php if($segment_2 == 'employees_timetable') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/employees_timetable'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-pie-chart"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+            <i class="bi bi-calendar-week"></i>
             <span>جداول الموظفين</span>
           </a>
         </li>
         <li class="sidebar-list-item <?php if($segment_2 == 'admins') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/admins'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+            <i class="bi bi-shield-lock"></i>
             <span>المدرين</span>
-          </a>
-        </li>
-        <li class="sidebar-list-item <?php if($segment_2 == 'settings') {echo 'active';} ?>">
-          <a href="<?php echo base_url().MOD_VALUE.'admin/settings'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
-            <span>الاعدادات</span>
           </a>
         </li>
         <li class="sidebar-list-item <?php if($segment_2 == 'requests') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/requests'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+            <i class="bi bi-clipboard-check"></i>
             <span>الطلبات</span>
           </a>
         </li>
         <li class="sidebar-list-item <?php if($segment_2 == 'sales') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/sales'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+            <i class="bi bi-receipt"></i>
             <span>المبيعات</span>
           </a>
         </li>
         <li class="sidebar-list-item <?php if($segment_2 == 'settlements') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/settlements'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+            <i class="bi bi-arrow-left-right"></i>
             <span>الفروقات</span>
           </a>
         </li>
         <li class="sidebar-list-item <?php if($segment_2 == 'shipments') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/shipments'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+            <i class="bi bi-truck"></i>
             <span>الشحنات</span>
           </a>
         </li>
         <li class="sidebar-list-item <?php if($segment_2 == 'lock-admin') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/lock-admin'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+            <i class="bi bi-lock"></i>
             <span>التقفيلة</span>
           </a>
         </li>
        <li class="sidebar-list-item <?php if($segment_2 == 'lock-track') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/lock-track'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+            <i class="bi bi-patch-check"></i>
             <span>تأكيد التقفيلة</span>
           </a>
         </li>
         <li class="sidebar-list-item">
           <a href="<?php echo base_url().MOD_VALUE.'admin/stocktaking'; ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+            <i class="bi bi-clipboard-data"></i>
             <span>جرد المخزون</span>
+          </a>
+        </li>
+        <li class="sidebar-list-item <?php if($segment_2 == 'forms') {echo 'active';} ?>">
+          <a href="<?php echo base_url().MOD_VALUE.'admin/forms'; ?>">
+            <i class="bi bi-ui-checks"></i>
+            <span>نماذج</span>
+          </a>
+        </li>
+        <li class="sidebar-list-item <?php if($segment_2 == 'settings') {echo 'active';} ?>">
+          <a href="<?php echo base_url().MOD_VALUE.'admin/settings'; ?>">
+            <i class="bi bi-gear"></i>
+            <span>الاعدادات</span>
           </a>
         </li>
       </ul>

@@ -66,7 +66,9 @@ class Shelves extends MY_Controller {
                     }
                 }
 
-                $this->session->set_flashdata('error', $errors);
+                if ($errors != '') {
+                    $this->session->set_flashdata('shelf_reorder_error', $errors);
+                }
 
             }
         }

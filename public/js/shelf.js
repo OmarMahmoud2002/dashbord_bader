@@ -1,4 +1,4 @@
-$(".app-content-headerButton").click(()=>{
+$(".app-content-headerButton:not(.orderShelf)").click(()=>{
   $(".popup-add-shelf").fadeIn(200)
 })
 
@@ -41,7 +41,22 @@ function delete_serial(){
 }
 
 function send_change_request() {
-    if (confirm('هل تريد حفظ البيانات')) {
+    if (typeof window.adminUiConfirm === 'function') {
+        window.adminUiConfirm({
+            title: 'تأكيد الحفظ',
+            message: 'هل تريد حفظ البيانات؟',
+            confirmText: 'حفظ',
+            cancelText: 'إلغاء',
+            icon: 'bi-check2-circle'
+        }).then((confirmed) => {
+            if (confirmed) {
+                $('.popup-movein-serials form').submit()
+            }
+        })
+        return
+    }
+
+    if (confirm('هل تريد حفظ البيانات؟')) {
         $('.popup-movein-serials form').submit()
     }
 }

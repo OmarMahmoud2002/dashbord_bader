@@ -2,6 +2,10 @@
 <?php $this->load->view('view_header'); ?>
 <?php $this->load->view('view_admin_sidebar');?>
 
+<?php
+$shelf_reorder_error = $this->session->flashdata('shelf_reorder_error');
+?>
+
 <div class = 'app-content admin-ui-page admin-ui-shelves'>
     <div class = 'app-content-header'>
         <h1 class = 'app-content-headerText'>الرف</h1>
@@ -74,7 +78,7 @@
             </form>
         </div>
     </div>
-    <div class="popup popup-movein-serials" style="display: none;">
+    <div class="popup popup-movein-serials" style="<?= $shelf_reorder_error ? 'display: block;' : 'display: none;' ?>">
         <div class="popup-shelves-content popup-content">
           <div class="title">
             <h3>اعادة ترتيب الرف</h3> 
@@ -98,18 +102,29 @@
                     })
                 </script>
             </div>
-            <label id = 'formTitle'>أختر السيريالات</label>
             <div class = 'formHeader'>
                 <div class = 'inpt'>
-                    <div style = 'display: flex;gap: 20px'>
-                        <input style = 'flex: 5' type = 'text' id = 'SerialInputAdder' autocomplete="off">
-                        <input style = 'flex: 1' type = 'text' id = 'PosterInputAdder' autocomplete="off">
+                    <div class = 'serial-entry-fields'>
+                        <div class = 'serial-entry-field serial-entry-field-main'>
+                            <label for = 'SerialInputAdder'>أختر السيريالات</label>
+                            <input type = 'text' id = 'SerialInputAdder' autocomplete="off" placeholder="أختر السيريالات">
+                        </div>
+                        <div class = 'serial-entry-field serial-entry-field-poster'>
+                            <label for = 'PosterInputAdder'>رقم الملصق</label>
+                            <input type = 'text' id = 'PosterInputAdder' autocomplete="off" placeholder="رقم الملصق">
+                        </div>
                     </div>
                 </div>
                 <button id = 'serialAdder' type="button">إضافة سيريال</button>
             </div>
             <div id = 'serials'>
             </div>
+            <?php if ($shelf_reorder_error) { ?>
+                <div class="shelf-reorder-message" role="alert">
+                    <i class="bi bi-exclamation-octagon"></i>
+                    <div><?= nl2br(secure_data(str_replace(array('<br><br>', '<br>'), "\n", $shelf_reorder_error))) ?></div>
+                </div>
+            <?php } ?>
 
             <input type = 'hidden' name = 'action' value="rearrange_shelf">
             <h2><span class = 'serials_number'>0</span></h2>

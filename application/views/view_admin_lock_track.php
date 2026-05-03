@@ -2,14 +2,6 @@
 <?php $this->view('view_header'); ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
-<style>
-
-
-.modal-backdrop {
-    background-color: rgba(0, 0, 0, 0.5); /* لون خلفية الظل */
-}
-
-</style>
  <?php
 $CI =& get_instance();
 $CI->load->model('Model_admin');
@@ -19,26 +11,14 @@ $CI2->load->model('Excel_import_model');
 ?>
 
 	<?php $this->view('view_admin_sidebar'); ?>
-<style>
-/* styles.css */
 
-
-.app-content {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-     overflow-y: auto;
-     padding-bottom: 150px;
-}
-</style>
-
-     <div class="app-content">
+     <div class="app-content admin-ui-lock-track">
       <div class="app-content-header">
 
         <h1 class="app-content-headerText">تأكيد التقفيلة</h1>
         
          <!-- Button trigger modal -->
-<button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#exampleModal">
+<button type="button" class="app-content-headerButton lock-add-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
   اضافة تقفيلة
 </button>
       </div>
@@ -56,57 +36,6 @@ $CI2->load->model('Excel_import_model');
       </div>
       <div class="page-container">
         <div class="content-wrap">
-
-    <style>
-        .tabs {
-            display: flex;
-            cursor: pointer;
-            background-color: #f1f1f1;
-        }
-        .tab {
-            padding: 14px 16px;
-            flex: 1;
-            text-align: center;
-            background-color: #ddd;
-            border: 1px solid #ccc;
-        }
-        .tab.active {
-            background-color: white;
-            border-bottom: 1px solid white;
-            font-weight: bold;
-        }
-        .tab-contents {
-            display: none;
-            padding: 20px;
-        }
-        .tab-contents.active {
-            display: block;
-        }
-        .popup {
-            display: none;
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        .popup-content {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            position: relative;
-        }
-        .popup .close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-        }
-    </style>
-
     <div class="tabs">
         <div class="tab" id="tab1">الدفعات النقدية</div>
         <div class="tab" id="tab2">المبيعات</div>
@@ -344,8 +273,8 @@ $CI2->load->model('Excel_import_model');
 		<!-- Modal -->
 <!-- Modal Structure -->
 
-<div class="modal fade" id="exampleModal"  aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-lg" role="document">
+<div class="modal fade lock-add-modal" id="exampleModal"  aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
     <div class="modal-content add-task-content">
       <div class="modal-header d-flex justify-content-between">
         <div>
@@ -359,18 +288,10 @@ $CI2->load->model('Excel_import_model');
         <?php echo form_open(base_url().MOD_VALUE.'user/sendlock', array('class' => '')); ?>
 
         <div class="cash-calculator">
+          <div class="lock-modal-fields">
           <div class="mb-3">
             <label for="datepicker">التاريخ</label>
             <input type="date" class="form-control" id="user_lock_time" name = 'user_lock_time' placeholder="dd-mm-yyyy" required>
-
-<style>
-/* تنسيق الحقل ليبدو كغير قابل للتعديل */
-input.disabled-field {
-  background-color: #fefefe; /* لون خلفية يوضح أن الحقل غير قابل للتعديل */
-  cursor: not-allowed; /* تغيير مؤشر الفأرة */
-  color: #6c757d; /* لون نص غير بارز */
-}
-</style>
 
           </div>
           <div class="mb-3">
@@ -386,6 +307,7 @@ input.disabled-field {
               }
               ?>
             </select>
+          </div>
           </div>
         
         <!-- التبويبات -->
@@ -475,7 +397,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var cash = parseFloat(document.getElementById('user_lock_cash').value) || 0;
     var span = parseFloat(document.getElementById('user_lock_span').value) || 0;
     var total = cash + span;
-    document.getElementById('total').value = total.toFixed(2);
+    document.getElementById('totalAmountField').value = total.toFixed(2);
   }
 
   // ربط وظيفة الحساب مع إدخال البيانات في التبويب الأول
