@@ -2,6 +2,10 @@
 
 <script>
   $(function() {
+    if (!$.fn.datepicker) {
+      return;
+    }
+
       $(".datepicker").datepicker({
           dateFormat: "yy-mm-dd" // Change this format as needed
       });

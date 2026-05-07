@@ -1,4 +1,11 @@
-<title>نماذج</title>
+<?php
+$form_key = $this->input->get('form', TRUE);
+$form_src = ($form_key === 'settlement') ? 'free_form/index2.html' : 'free_form/index.html';
+$forms_data_url = isset($forms_data_url) ? $forms_data_url : base_url().MOD_VALUE.'admin/forms-data';
+$form_src .= '?' . http_build_query(['data' => $forms_data_url]);
+$form_title = ($form_key === 'settlement') ? 'نموذج تسوية الغرامة' : 'استبدال الجهاز';
+?>
+<title><?= $form_title; ?></title>
 <?php $this->load->view('view_header'); ?>
 <?php $this->load->view('view_admin_sidebar'); ?>
 
@@ -33,8 +40,8 @@
   <div class="admin-forms-frame-shell">
     <iframe
       class="admin-forms-frame"
-      src="<?php echo base_url('free_form/index.html'); ?>"
-      title="نماذج"
+      src="<?php echo base_url($form_src); ?>"
+      title="<?= $form_title; ?>"
     ></iframe>
   </div>
 </div>

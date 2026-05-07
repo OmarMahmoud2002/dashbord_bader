@@ -8,6 +8,7 @@ let startOverBtn = document.getElementById("startOverBtn");
 let deliveryBtn = document.getElementById("deliveryBtn");
 let delivery_btn = document.getElementsByClassName("delivery_btn");
 let prod_infos = document.querySelector(".prod_infos");
+let productDetailsClose = document.querySelector(".product-details-close");
 let prod_form = document.querySelector(".admin-ui-product-search .prod_form");
 let select_type = document.querySelector(".select_type");
 let radios_enabled = false
@@ -28,7 +29,9 @@ serialNumber.focus()
 
 function sync_product_search_layout() {
     if (!prod_form || !prod_infos) return;
-    prod_form.classList.toggle('has-result', !prod_infos.classList.contains('hide'));
+    const hasResult = !prod_infos.classList.contains('hide');
+    prod_form.classList.toggle('has-result', hasResult);
+    document.body.classList.toggle('product-details-open', hasResult);
 }
 
 if (prod_form && prod_infos) {
@@ -39,8 +42,35 @@ if (prod_form && prod_infos) {
     });
 }
 
+function close_product_details() {
+    if (!prod_infos) return;
+    prod_infos.classList.add("hide");
+    sync_product_search_layout();
+}
+
+if (productDetailsClose) {
+  productDetailsClose.addEventListener("click", close_product_details);
+}
+
+if (prod_infos) {
+  prod_infos.addEventListener("click", (event) => {
+    if (event.target === prod_infos) {
+      close_product_details();
+    }
+  });
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && prod_infos && !prod_infos.classList.contains("hide")) {
+    close_product_details();
+  }
+});
+
 function set_data(data) {
     var image_path = "/public/img/products/" + 'default_product_image.png';
+    var product_images = Array.isArray(data['images']) && data['images'].length ? data['images'] : [image_path];
+
+    $('.product-gallery-extra').remove();
     $('#product_name').text(data['name']);
     
     if (data['shelf'].includes('movedToEmployee')) {
@@ -52,8 +82,19 @@ function set_data(data) {
     $('#item_code').text(data['code']);
     $('#subinventory_code').text(data['subinventory_code']);
     $('#total_quantity').text(data['total_quantity']);
-    $('#product_image').attr('href', image_path);
-    $('#product_image img').attr('src', image_path);
+    $('#product_image').attr('href', product_images[0]);
+    $('#product_image').attr('data-caption', data['name']);
+    $('#product_image img').attr('src', product_images[0]);
+
+    product_images.slice(1).forEach((image, index) => {
+      const galleryLink = document.createElement('a');
+      galleryLink.className = 'product-gallery-extra hide';
+      galleryLink.href = image;
+      galleryLink.dataset.fancybox = 'product-gallery';
+      galleryLink.dataset.caption = `${data['name']} - ${index + 2}`;
+      $('#product_image').after(galleryLink);
+    });
+
     $('#poster_number').text(data['poster_number']);
     
     
@@ -470,10 +511,40 @@ document.querySelectorAll(".list li").forEach(elm => {
 
 
 // Image
-Fancybox.bind("[data-fancybox]", {});
+Fancybox.bind("[data-fancybox]", {
+  Carousel: {
+    Navigation: true,
+  },
+  Toolbar: {
+    display: {
+      left: [],
+      middle: [],
+      right: ["close"],
+    },
+  },
+  Thumbs: false,
+});
 
 
 // Cart
+function refreshCartState() {
+  const itemCount = $('.cart-item').length;
+  const countBadge = $('.cart p');
+
+  if (itemCount > 0) {
+    countBadge.text(itemCount);
+    $('.select-all-container').show();
+    $('.cart-empty-state').remove();
+    return;
+  }
+
+  countBadge.remove();
+  $('.select-all-container').hide();
+  if ($('.cart-empty-state').length === 0) {
+    $('.cart-popup').append('<div class="cart-empty-state">لا توجد منتجات</div>');
+  }
+}
+
 function register_item_to_cart() {
 
     $.post('./add_item_to_cart', {'item_id' : product_data['id'], 'serial_control' : product_data['serial_control']}, (data) => {
@@ -491,14 +562,14 @@ function remove_cart_item(event) {
     for (let cartItemId of selected_items) {
       $.post('./remove_cart_item', {'id' : cartItemId}, (itemId) => {
         $('#' + itemId).remove();
-        $('.cart p').text(parseInt($('.cart p').text()) - 1)
+        refreshCartState();
       })
     }
   } else {
     cartItem = $(event.target).closest('.cart-item')
     $.post('./remove_cart_item', {'id' : $(cartItem).attr('id')}, (itemId) => {
         $('#' + itemId).remove();
-        $('.cart p').text(parseInt($('.cart p').text()) - 1)
+        refreshCartState();
     })
   }
   

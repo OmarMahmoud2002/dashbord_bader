@@ -106,8 +106,8 @@ $shelf_reorder_error = $this->session->flashdata('shelf_reorder_error');
                 <div class = 'inpt'>
                     <div class = 'serial-entry-fields'>
                         <div class = 'serial-entry-field serial-entry-field-main'>
-                            <label for = 'SerialInputAdder'>أختر السيريالات</label>
-                            <input type = 'text' id = 'SerialInputAdder' autocomplete="off" placeholder="أختر السيريالات">
+                            <label for = 'SerialInputAdder'>رقم السيريالات</label>
+                            <input type = 'text' id = 'SerialInputAdder' autocomplete="off" placeholder="رقم السيريالات">
                         </div>
                         <div class = 'serial-entry-field serial-entry-field-poster'>
                             <label for = 'PosterInputAdder'>رقم الملصق</label>
@@ -116,6 +116,10 @@ $shelf_reorder_error = $this->session->flashdata('shelf_reorder_error');
                     </div>
                 </div>
                 <button id = 'serialAdder' type="button">إضافة سيريال</button>
+                <div class = 'serials-total-card' aria-live="polite">
+                    <span>المجموع</span>
+                    <strong class = 'serials_number'>0</strong>
+                </div>
             </div>
             <div id = 'serials'>
             </div>
@@ -127,7 +131,6 @@ $shelf_reorder_error = $this->session->flashdata('shelf_reorder_error');
             <?php } ?>
 
             <input type = 'hidden' name = 'action' value="rearrange_shelf">
-            <h2><span class = 'serials_number'>0</span></h2>
             <button style = 'width: 100%' type = 'button' onclick="send_change_request()">حفظ</button>
           </form>
         </div>
@@ -146,6 +149,40 @@ $shelf_reorder_error = $this->session->flashdata('shelf_reorder_error');
 .formHeader button {
     margin: 0px !important;
     width: 100% !important;
+}
+
+.serials-total-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 14px;
+    padding: 14px 18px;
+    width: 100%;
+    border: 1px solid #dbe5f4;
+    border-radius: 12px;
+    background: #f8fbff;
+    color: #25364d;
+    box-shadow: 0 10px 24px rgba(102, 126, 234, 0.12);
+}
+
+.serials-total-card span {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.serials-total-card strong {
+    min-width: 48px;
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
 }
 
 .formHeader .inpt input {

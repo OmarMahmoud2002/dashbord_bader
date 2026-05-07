@@ -22,7 +22,7 @@ $product_status = [1 => 'تم التحقق', 0 => 'لم يتم التحقق'];
       <div class="products-header">
         <div class="product-cell order_number">رقم الطلب</div>
         <div class="product-cell name">اسم الجهاز</div>
-        <div class="product-cell serial barcode">سيريال الجهاز</div>
+        <div class="product-cell">سيريال الجهاز</div>
         <div class="product-cell itemCode">رقم الصنف</div>
         <div class="product-cell date">تاريخ الطلب</div>
         <div class="product-cell actions"></div>
@@ -39,7 +39,7 @@ $product_status = [1 => 'تم التحقق', 0 => 'لم يتم التحقق'];
                 <span class = 'cell-label'>اسم الجهاز</span>
                 <p><?=$item['item_description']?></p>
             </div>
-            <div class="product-cell serial">
+            <div class="product-cell">
                 <span class = 'cell-label'>سيريال الجهاز</span>
                 <p><?=$item['serial_number']?></p>
             </div>

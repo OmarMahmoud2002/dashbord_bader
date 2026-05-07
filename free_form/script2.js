@@ -1,5 +1,8 @@
 // تحميل النموذج كملف PDF
 document.addEventListener('DOMContentLoaded', function() {
+    const cancelDateInput = document.getElementById('serviceCancelDate');
+    const syncedDateInputs = document.querySelectorAll('[data-sync-from-cancel-date]');
+    let syncingCancelDate = false;
     
     // تفعيل flatpickr لحقول التاريخ
     if (typeof flatpickr !== 'undefined') {
@@ -14,6 +17,48 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('تم تفعيل حقول التاريخ بنجاح');
     } else {
         console.error('مكتبة flatpickr غير محملة');
+    }
+
+    const setDateInputValue = (input, value) => {
+        if (input._flatpickr) {
+            input._flatpickr.setDate(value, false, "d/m/Y");
+            return;
+        }
+
+        input.value = value;
+    };
+
+    const syncCancelDateToSignatureDates = () => {
+        if (!cancelDateInput || !cancelDateInput.value.trim()) {
+            return;
+        }
+
+        syncingCancelDate = true;
+        syncedDateInputs.forEach((input) => {
+            if (!input.value.trim() || input.dataset.syncedFromCancelDate === '1') {
+                setDateInputValue(input, cancelDateInput.value);
+                input.dataset.syncedFromCancelDate = '1';
+            }
+        });
+        syncingCancelDate = false;
+    };
+
+    if (cancelDateInput && syncedDateInputs.length) {
+        ['change', 'input'].forEach((eventName) => {
+            cancelDateInput.addEventListener(eventName, syncCancelDateToSignatureDates);
+        });
+
+        syncedDateInputs.forEach((input) => {
+            ['change', 'input'].forEach((eventName) => {
+                input.addEventListener(eventName, () => {
+                    if (!syncingCancelDate) {
+                        input.dataset.syncedFromCancelDate = '0';
+                    }
+                });
+            });
+        });
+
+        syncCancelDateToSignatureDates();
     }
     
     const downloadBtn = document.getElementById('downloadBtn');

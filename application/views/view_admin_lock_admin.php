@@ -3,7 +3,7 @@
 
 
 $this->view('view_header'); ?>
-<link rel="stylesheet" href="<?=base_url('/public/css/lock_admin.css')?>">
+<link rel="stylesheet" href="<?=base_url('/public/css/lock_admin.css')?>?a=<?php $date=date_create();echo date_timestamp_get($date);?>">
 
 
  <?php
@@ -14,7 +14,7 @@ $size = 17;
 
 	<?php $this->view('view_admin_sidebar'); ?>
 
-    <div class="app-content">
+    <div class="app-content admin-ui-page admin-ui-lock-admin">
         <div class="app-content-header">
             <h1 class="app-content-headerText">التقفيلة</h1>
         </div>
@@ -245,7 +245,7 @@ $size = 17;
               <?php endforeach; ?>
               <td class = 'zero-value'><?=number_format(0, 2)?></td>
             </tr>
-            <tr class = 'no-hover'>
+            <tr class = 'difference-row no-hover'>
                 <td colspan = "2" class = 'category'>الفروقات</td>
                 <?php
                 $total_differences = 0;

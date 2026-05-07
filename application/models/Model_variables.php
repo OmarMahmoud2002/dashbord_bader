@@ -16,8 +16,30 @@ class Model_variables extends CI_Model {
         return $result ? $result->value : null;
     }
 
+    function getmany($names) {
+        if (empty($names)) {
+            return [];
+        }
+
+        $this->db->where_in('name', $names);
+        $query = $this->db->get($this->table);
+        $rows = $query->result();
+        $result = [];
+
+        foreach ($rows as $row) {
+            $result[$row->name] = $row->value;
+        }
+
+        return $result;
+    }
+
+    function hasdata($name) {
+        $this->db->where('name', $name);
+        return $this->db->count_all_results($this->table) > 0;
+    }
+
     function setdata($name, $value) {
-        if (!$this->getdata($name)) {
+        if (!$this->hasdata($name)) {
             $this->db->insert($this->table, ['name' => $name, 'value' => $value]);
             return;
         }

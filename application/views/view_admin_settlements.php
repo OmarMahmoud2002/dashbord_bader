@@ -258,11 +258,26 @@ function calculateChanges() {
 }
 </script>
 <style>
-    .readonly {
-        background-color: #b3b8bd;
+    .popup-Tswya input[readonly],
+    .popup-Tswya input[disabled],
+    .popup-Tswya .readonly {
+        cursor: not-allowed !important;
+        caret-color: transparent;
+        background-color: #f8fafc;
+        color: #64748b;
     }
-    
-    
 
-
+    .popup-Tswya input[readonly]:hover,
+    .popup-Tswya input[readonly]:focus,
+    .popup-Tswya input[disabled]:hover,
+    .popup-Tswya input[disabled]:focus,
+    .popup-Tswya .readonly:hover,
+    .popup-Tswya .readonly:focus {
+        cursor: not-allowed !important;
+        border-color: #f43f5e !important;
+        background-color: #ffe4e6 !important;
+        color: #be123c !important;
+        box-shadow: 0 0 0 0.2rem rgba(244, 63, 94, 0.14) !important;
+        outline: none;
+    }
 </style>

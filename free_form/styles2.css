@@ -18,7 +18,6 @@ body {
     padding: 50px;
     direction: rtl;
     font-weight: 400;
-    padding-left: 180px; /* Space for sidebar */
 }
 
 /* Sidebar Styles */

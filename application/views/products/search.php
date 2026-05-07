@@ -40,20 +40,21 @@
           </div>
           <div class = 'top_part' >
             <button type = 'button' id = 'startOverBtn'>البدء من جديد</button>
-            <div class="cart" title="سلة المنتجات" aria-label="سلة المنتجات">
-              <i class="bi bi-basket2" aria-hidden="true"></i>
-              <?php 
-              $count = count($cart);
-              if ($count > 0) {
-                echo '<p>' . $count . '</p>';
-              }
-              ?>
-            </div>
-          </div>
-          <div class="cart-popup" >
-            <?php foreach ($cart as $cart_item) { ?>
-                <div class = 'cart-item' id = '<?=$cart_item->id?>' data-item-id = '<?=$cart_item->item_id?>' data-serial_control = '<?=$cart_item->serial_control?>'>
-                    <?php 
+            <?php $count = count($cart); ?>
+            <div class="cart-menu">
+              <div class="cart" title="سلة المنتجات" aria-label="سلة المنتجات">
+                <i class="bi bi-basket2" aria-hidden="true"></i>
+                <?php
+                if ($count > 0) {
+                  echo '<p>' . $count . '</p>';
+                }
+                ?>
+              </div>
+              <div class="cart-popup" >
+                <?php if ($count > 0) { ?>
+                  <?php foreach ($cart as $cart_item) { ?>
+                      <div class = 'cart-item' id = '<?=$cart_item->id?>' data-item-id = '<?=$cart_item->item_id?>' data-serial_control = '<?=$cart_item->serial_control?>'>
+                    <?php
                     $item = $this->Store->get_store_item(['id' => $cart_item->item_id]);
                     $shelf_id = $this->Store->get_item_shelf($item['item_code'], $item['serial_number'], $item['barcode']);
 
@@ -66,7 +67,7 @@
                     ?>
 
                     <input type="checkbox" onchange="toggleItemSelection(this)">
-                    <a href="/public/img/products/default_product_image.png" class="img" data-fancybox data-caption="Product 1">
+                    <a href="/public/img/products/default_product_image.png" class="img" data-fancybox="cart-gallery" data-caption="Product 1">
                       <img src="/public/img/products/default_product_image.png" />
                     </a>
                     <div class="item-details">
@@ -109,12 +110,17 @@
                         <button type = 'button' class = 'acc-btn'>✔</button>
                         <button type = 'button' class = 'rem-btn'>✖</button>
                     </div>
-                </div>
-                
-            <?php } ?>
-            <div class="select-all-container">
-                <input type="checkbox" id="selectAllCheckbox" onchange="toggleAllSelections(this)">
-                <label for="selectAllCheckbox">تحديد الكل</label>
+                      </div>
+
+                  <?php } ?>
+                  <div class="select-all-container">
+                      <input type="checkbox" id="selectAllCheckbox" onchange="toggleAllSelections(this)">
+                      <label for="selectAllCheckbox">تحديد الكل</label>
+                  </div>
+                <?php } else { ?>
+                  <div class="cart-empty-state">لا توجد منتجات</div>
+                <?php } ?>
+              </div>
             </div>
           </div>
           <ul class="list">
@@ -170,14 +176,18 @@
           </div>
         </form>
         <div class="prod_infos hide">
-          <div class="product-details-head">
+          <div class="product-details-card">
+            <button type="button" class="product-details-close" aria-label="إغلاق">
+              <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+            <div class="product-details-head">
             <span class="product-details-icon" aria-hidden="true"><i class="bi bi-box-seam"></i></span>
             <div>
               <h1>تفاصيل المنتج</h1>
               <p>بيانات المنتج المرتبطة بنتيجة البحث الحالية</p>
             </div>
           </div>
-          <div class="cnts">
+            <div class="cnts">
             <table class="prod_info">
               <tbody><tr>
 
@@ -209,9 +219,10 @@
                 <td id = 'poster_number'></td>
               </tr>
             </tbody></table>
-            <a id = 'product_image' class="product-image-preview" href="" data-fancybox data-caption>
+            <a id = 'product_image' class="product-image-preview" href="" data-fancybox="product-gallery" data-caption>
               <img src="" alt="صورة المنتج">
             </a>
+            </div>
           </div>
         </div>
     </div>
@@ -304,7 +315,6 @@
 </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
 
 <script src="<?php echo base_url(); ?>public/js/script.js?a=<?php $date=date_create();echo date_timestamp_get($date);?>"></script>

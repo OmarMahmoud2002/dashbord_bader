@@ -4,6 +4,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <?php
 $error_message = '';
 $success_message = '';
+$header_CI =& get_instance();
+$is_admin_shell = ($header_CI->uri->segment(1) === 'admin');
 ?>
 
 <!DOCTYPE html>
@@ -39,7 +41,10 @@ $success_message = '';
     <link rel="stylesheet" href="<?php echo base_url(); ?>public/css/main.css?a=<?php $date=date_create();echo date_timestamp_get($date);?>">
     <link rel="stylesheet" href="<?php echo base_url(); ?>public/css/login.css?a=<?php $date=date_create();echo date_timestamp_get($date);?>">
     <link rel="stylesheet" href="<?php echo base_url(); ?>public/css/search_product.css?a=<?php $date=date_create();echo date_timestamp_get($date);?>">
+    <?php if ($is_admin_shell) { ?>
+    <link rel="stylesheet" href="<?php echo base_url(); ?>public/css/admin-ui-pattern.css?a=<?php $date=date_create();echo date_timestamp_get($date);?>">
+    <?php } ?>
 
 
 </head>
-<body>
+<body<?php echo $is_admin_shell ? ' class="admin-ui-shell"' : ''; ?>>

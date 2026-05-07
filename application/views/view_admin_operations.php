@@ -60,21 +60,39 @@
                             <th>التاريخ</th>
                             <th>طلب المبيعات</th>
                             <th>نوع العملية</th>
+                            <th class="operation-movement-heading">العدد</th>
                             <th>تم الإنشاء بواسطة</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($operations as $operation) { ?>
+                        <?php foreach ($operations as $operation) {
+                            $operation_text = (string) $operation->operation;
+                            $movement_value = '';
+                            $movement_class = '';
+
+                            if (strpos($operation_text, 'ارجاع') !== false || strpos($operation_text, 'إرجاع') !== false) {
+                                $movement_value = '1';
+                                $movement_class = 'operation-movement-in';
+                            } elseif (strpos($operation_text, 'تسجيل') !== false || strpos($operation_text, 'تسليم') !== false) {
+                                $movement_value = '-1';
+                                $movement_class = 'operation-movement-out';
+                            }
+                        ?>
                             <tr>
                                 <td><?=date_format(date_create($operation->date_created), 'd-m-Y h:i:s A')?></td>
                                 <td><?=$operation->sales_order?></td>
                                 <td><?=$operation->operation?></td>
+                                <td class="operation-movement-cell">
+                                    <?php if ($movement_value !== '') { ?>
+                                        <span class="operation-movement-badge <?=$movement_class?>"><?=$movement_value?></span>
+                                    <?php } ?>
+                                </td>
                                 <td><?=$this->Model_admin->get_user_by_id($operation->made_by)['user_fillname']?></td>
                             </tr>
                         <?php } ?>
                         <?php if (empty($operations)) { ?>
                             <tr class="operations-empty-row">
-                                <td colspan="4">
+                                <td colspan="5">
                                     <i class="bi bi-inbox"></i>
                                     <span>لا توجد عمليات لعرضها حالياً</span>
                                 </td>

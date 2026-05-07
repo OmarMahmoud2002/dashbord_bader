@@ -146,10 +146,143 @@ function initAdminSidebarTooltips() {
   window.addEventListener("resize", hideTooltip);
 }
 
+function scrollAdminSidebarToTarget(target, smooth) {
+  const sidebar = document.querySelector("body.admin-ui-shell .sidebar");
+  if (!sidebar || !target) {
+    return;
+  }
+
+  const sidebarRect = sidebar.getBoundingClientRect();
+  const targetRect = target.getBoundingClientRect();
+  const targetTop = sidebar.scrollTop + targetRect.top - sidebarRect.top - (sidebar.clientHeight / 2) + (targetRect.height / 2);
+  const maxTop = Math.max(0, sidebar.scrollHeight - sidebar.clientHeight);
+
+  sidebar.scrollTo({
+    top: Math.min(Math.max(0, targetTop), maxTop),
+    behavior: smooth ? "smooth" : "auto"
+  });
+}
+
+function getActiveAdminSidebarTarget() {
+  const activeSubmenuLink = document.querySelector("body.admin-ui-shell .sidebar-submenu a.active");
+  if (activeSubmenuLink && activeSubmenuLink.offsetParent !== null) {
+    return activeSubmenuLink;
+  }
+
+  return document.querySelector("body.admin-ui-shell .sidebar-list-item.active");
+}
+
+function initAdminSidebarAutoScroll() {
+  const sidebar = document.querySelector("body.admin-ui-shell .sidebar");
+  if (!sidebar) {
+    return;
+  }
+
+  setTimeout(() => scrollAdminSidebarToTarget(getActiveAdminSidebarTarget(), false), 80);
+
+  sidebar.querySelectorAll(".sidebar-list-item a").forEach((link) => {
+    link.addEventListener("click", () => {
+      const target = link.classList.contains("active") ? link : link.closest(".sidebar-list-item");
+      setTimeout(() => scrollAdminSidebarToTarget(target, true), 60);
+    });
+  });
+}
+
+function initAdminSidebarSubmenus() {
+  document.querySelectorAll("body.admin-ui-shell .sidebar-list-item.has-submenu").forEach((item) => {
+    const toggle = item.querySelector(":scope > .sidebar-submenu-toggle");
+    if (!toggle) {
+      return;
+    }
+
+    const syncExpandedState = () => {
+      toggle.setAttribute("aria-expanded", item.classList.contains("submenu-open") || item.classList.contains("active") ? "true" : "false");
+    };
+
+    toggle.setAttribute("aria-haspopup", "true");
+    syncExpandedState();
+
+    toggle.addEventListener("click", (event) => {
+      if (document.body.classList.contains("sidebar-collapsed")) {
+        return;
+      }
+
+      event.preventDefault();
+      item.classList.toggle("submenu-open");
+      syncExpandedState();
+      scrollAdminSidebarToTarget(item, true);
+    });
+  });
+}
+
+function initAdminTableColumnHover() {
+  document.querySelectorAll(".admin-ui-page .tableView").forEach((table) => {
+    if (table.dataset.columnHoverReady === "1") {
+      return;
+    }
+
+    const header = table.querySelector(".products-header");
+    if (!header) {
+      return;
+    }
+
+    table.dataset.columnHoverReady = "1";
+
+    const clearColumnHover = () => {
+      table.querySelectorAll(".product-cell.is-column-hovered").forEach((cell) => {
+        cell.classList.remove("is-column-hovered");
+      });
+    };
+
+    const setColumnHover = (index) => {
+      clearColumnHover();
+
+      Array.from(table.children).forEach((row) => {
+        if (!row.classList.contains("products-header") && !row.classList.contains("products-row")) {
+          return;
+        }
+
+        const cells = Array.from(row.children).filter((child) => child.classList.contains("product-cell"));
+        if (cells[index]) {
+          cells[index].classList.add("is-column-hovered");
+        }
+      });
+    };
+
+    header.querySelectorAll(".product-cell").forEach((cell, index) => {
+      cell.setAttribute("tabindex", cell.getAttribute("tabindex") || "0");
+
+      cell.addEventListener("pointerenter", () => {
+        setColumnHover(index);
+      });
+
+      cell.addEventListener("focus", () => {
+        setColumnHover(index);
+      });
+    });
+
+    header.addEventListener("pointerleave", clearColumnHover);
+
+    header.addEventListener("focusout", (event) => {
+      if (!header.contains(event.relatedTarget)) {
+        clearColumnHover();
+      }
+    });
+  });
+}
+
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initAdminSidebarTooltips);
+  document.addEventListener("DOMContentLoaded", function () {
+    initAdminSidebarTooltips();
+    initAdminSidebarSubmenus();
+    initAdminSidebarAutoScroll();
+    initAdminTableColumnHover();
+  });
 } else {
   initAdminSidebarTooltips();
+  initAdminSidebarSubmenus();
+  initAdminSidebarAutoScroll();
+  initAdminTableColumnHover();
 }
 
 // Menu
@@ -282,6 +415,10 @@ $("body").click(function () {
 // Table responsive
 function checkWidth() {
   const elm = document.querySelector('.products-area-wrapper');
+  if (!elm) {
+    return;
+  }
+
   if (window.innerWidth <= 650) {
     elm.classList.add('gridView');
     elm.classList.remove('tableView');

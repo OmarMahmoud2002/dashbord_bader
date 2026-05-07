@@ -9,7 +9,8 @@ let scheduleData = {};
 let supervisorsData = {}; // بيانات المشرفين
 
 function get_employees() {
-  $.get('get_employees', function(data) {
+  return $.get('get_employees', function(data) {
+    employees = [];
     for (let emp of data) {
       employees.push({name: emp.user_fillname, id: emp.user_id});
     }
@@ -17,23 +18,45 @@ function get_employees() {
 }
 
 function get_supervisors() {
-  $.get('get_supervisors', function(data) {
+  return $.get('get_supervisors', function(data) {
+    supervisors = [];
     for (let supervisor of data) {
       supervisors.push({name : supervisor.user_fillname, id: supervisor.user_id});
     }
   }, 'json');
 }
 
+function parseScheduleResponse(data) {
+  if (!data) return {};
+  if (typeof data === 'string') {
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      return {};
+    }
+  }
+  return data;
+}
+
 function get_schedule() {
-  $.get('get_schedule', function(data) {
-    scheduleData = JSON.parse(data);
-  });
+  return $.get('get_schedule', function(data) {
+    scheduleData = parseScheduleResponse(data);
+  }, 'json');
 }
 
 function get_supervisors_schedule() {
-  $.get('get_supervisors_schedule', function(data) {
-    supervisorsData = JSON.parse(data); // افترض أن البيانات تأتي بنفس التنسيق
-  });
+  return $.get('get_supervisors_schedule', function(data) {
+    supervisorsData = parseScheduleResponse(data);
+  }, 'json');
+}
+
+function loadTimetableData() {
+  return $.when(
+    get_employees(),
+    get_supervisors(),
+    get_schedule(),
+    get_supervisors_schedule()
+  );
 }
 // إضافة متغير للتحكم في عرض جميع الأسابيع
 let showAllWeeks = false;
@@ -63,12 +86,6 @@ function loadSupervisorsData() {
   }
 }
 
-// تحميل البيانات عند بدء التطبيق
-get_employees();
-get_supervisors();
-get_schedule();
-get_supervisors_schedule();
-
 const getWeekDates = (month, weekIndex) => {
   const year = selectedYear;
   const firstDay = new Date(year, month, 1);
@@ -86,6 +103,33 @@ const getWeekDates = (month, weekIndex) => {
 
 function formatDate(date) {
   return String(date.getDate()).padStart(2, '0');
+}
+
+function normalizeScheduleType(cellData) {
+  if (!cellData) return '';
+
+  const type = (cellData.type || '').trim().toLowerCase();
+  if (['am', 'pm', 'leave', 'note'].includes(type)) {
+    return type;
+  }
+
+  const status = (cellData.status || '').trim().toLowerCase();
+  if (status === 'am') return 'am';
+  if (status === 'pm') return 'pm';
+  if (['أجازه', 'إجازة', 'اجازه', 'اجازة'].includes(status)) return 'leave';
+  if (status) return 'note';
+
+  return '';
+}
+
+function getScheduleCellClass(cellData) {
+  switch (normalizeScheduleType(cellData)) {
+    case 'am': return ' bg-am';
+    case 'pm': return ' bg-pm';
+    case 'leave': return ' bg-leave';
+    case 'note': return ' bg-note';
+    default: return ' bg-white';
+  }
 }
 
 // دالة للتحقق من وجود الأسبوع الخامس في الشهر
@@ -170,7 +214,7 @@ const renderTable = () => {
         <table class="table table-bordered table-hover">
           <thead class="table-primary">
             <tr>
-              <th class="align-middle text-center table-primary">الموظف</th>
+              <th class="align-middle text-center table-primary employee-name-col">الموظف</th>
               ${dates.map(date => `
                 <th class="vertical-header" id="employee-day${week}-${date.getDay()}">
                   <span class="day-name">${days[date.getDay()]}</span>
@@ -182,23 +226,12 @@ const renderTable = () => {
           <tbody>
             ${employees.map(emp => `
               <tr>
-                <td class="align-middle text-center table-primary fw-bold">${emp.name}</td>
+                <td class="align-middle text-center table-primary fw-bold employee-name-col">${emp.name}</td>
                 ${dates.map(date => {
                   const dateStr = date.toISOString().split('T')[0];
                   const cellData = scheduleData[`${emp.id}_${dateStr}`] || {};
                   let cellClass = 'align-middle text-center';
-                  if (cellData.type) {
-                    switch(cellData.type) {
-                      case 'off': cellClass += ' bg-off'; break;
-                      case 'leave': cellClass += ' bg-leave'; break;
-                      case 'event': cellClass += ' bg-event'; break;
-                      case 'hours8': cellClass += ' bg-hours8'; break;
-                      case 'hours14': cellClass += ' bg-hours14'; break;
-                      case 'store': cellClass += ' bg-store'; break;
-                    }
-                  } else {
-                    cellClass += ' bg-white';
-                  }
+                  cellClass += getScheduleCellClass(cellData);
                   return `<td class="${cellClass}" style="cursor: pointer" data-date="${date.toISOString()}" data-employee="${emp.name}" data-employeeid="${emp.id}">${cellData.status || ''}</td>`;
                 }).join('')}
               </tr>
@@ -224,68 +257,55 @@ const renderTable = () => {
           </thead>
           <tbody>
             <tr>
-              <td class="align-middle text-center bg-white text-dark fw-bold">8</td>
+              <td class="align-middle text-center bg-am fw-bold">AM</td>
               ${dates.map(date => {
                 const dateStr = date.toISOString().split('T')[0];
-                let time8Count = 0;
+                let amCount = 0;
                 employees.forEach(emp => {
                   const key = `${emp.id}_${dateStr}`;
                   const cellData = scheduleData[key] || {};
-                  if (cellData.type === 'hours8') time8Count++;
+                  if (normalizeScheduleType(cellData) === 'am') amCount++;
                 });
-                return `<td class="text-center time-8 time-cell bg-hours8">${time8Count}</td>`;
+                return `<td class="text-center time-am time-cell bg-am">${amCount}</td>`;
               }).join('')}
             </tr>
             <tr>
-              <td class="align-middle text-center bg-white text-dark fw-bold">14</td>
+              <td class="align-middle text-center bg-pm fw-bold">PM</td>
               ${dates.map(date => {
                 const dateStr = date.toISOString().split('T')[0];
-                let time14Count = 0;
+                let pmCount = 0;
                 employees.forEach(emp => {
                   const key = `${emp.id}_${dateStr}`;
                   const cellData = scheduleData[key] || {};
-                  if (cellData.type === 'hours14') time14Count++;
+                  if (normalizeScheduleType(cellData) === 'pm') pmCount++;
                 });
-                return `<td class="text-center time-14 time-cell bg-hours14">${time14Count}</td>`;
+                return `<td class="text-center time-pm time-cell bg-pm">${pmCount}</td>`;
               }).join('')}
             </tr>
             <tr>
-              <td class="align-middle text-center bg-leave fw-bold">إجازة</td>
+              <td class="align-middle text-center bg-leave fw-bold">أجازه</td>
               ${dates.map(date => {
                 const dateStr = date.toISOString().split('T')[0];
                 let leaveCount = 0;
                 employees.forEach(emp => {
                   const key = `${emp.id}_${dateStr}`;
                   const cellData = scheduleData[key] || {};
-                  if (cellData.type === 'leave') leaveCount++;
+                  if (normalizeScheduleType(cellData) === 'leave') leaveCount++;
                 });
                 return `<td class="text-center leave time-cell bg-leave">${leaveCount}</td>`;
               }).join('')}
             </tr>
             <tr>
-              <td class="align-middle text-center bg-off fw-bold">OFF</td>
+              <td class="align-middle text-center bg-note fw-bold">ملاحظه</td>
               ${dates.map(date => {
                 const dateStr = date.toISOString().split('T')[0];
-                let offCount = 0;
+                let noteCount = 0;
                 employees.forEach(emp => {
                   const key = `${emp.id}_${dateStr}`;
                   const cellData = scheduleData[key] || {};
-                  if (cellData.type === 'off') offCount++;
+                  if (normalizeScheduleType(cellData) === 'note') noteCount++;
                 });
-                return `<td class="text-center off time-cell bg-off">${offCount}</td>`;
-              }).join('')}
-            </tr>
-            <tr>
-              <td class="align-middle text-center bg-store fw-bold">ستور</td>
-              ${dates.map(date => {
-                const dateStr = date.toISOString().split('T')[0];
-                let storeCount = 0;
-                employees.forEach(emp => {
-                  const key = `${emp.id}_${dateStr}`;
-                  const cellData = scheduleData[key] || {};
-                  if (cellData.type === 'store') storeCount++;
-                });
-                return `<td class="text-center store time-cell bg-store">${storeCount}</td>`;
+                return `<td class="text-center note time-cell bg-note">${noteCount}</td>`;
               }).join('')}
             </tr>
           </tbody>
@@ -315,18 +335,7 @@ const renderTable = () => {
                   const dateStr = date.toISOString().split('T')[0];
                   const cellData = supervisorsData[`${sup.id}_${dateStr}`] || {};
                   let cellClass = 'align-middle text-center';
-                  if (cellData.type) {
-                    switch(cellData.type) {
-                      case 'off': cellClass += ' bg-off'; break;
-                      case 'leave': cellClass += ' bg-leave'; break;
-                      case 'event': cellClass += ' bg-event'; break;
-                      case 'hours8': cellClass += ' bg-hours8'; break;
-                      case 'hours14': cellClass += ' bg-hours14'; break;
-                      case 'store': cellClass += ' bg-store'; break;
-                    }
-                  } else {
-                    cellClass += ' bg-white';
-                  }
+                  cellClass += getScheduleCellClass(cellData);
                   return `<td class="${cellClass}" style="cursor: pointer" data-date="${date.toISOString()}" data-supervisor="${sup.name}" data-supervisorid="${sup.id}">${cellData.status || ''}</td>`;
                 }).join('')}
               </tr>
@@ -354,7 +363,7 @@ const renderTable = () => {
       <table class="table table-bordered table-hover">
         <thead class="table-primary">
           <tr>
-            <th class="align-middle text-center table-primary">الموظف</th>
+            <th class="align-middle text-center table-primary employee-name-col">الموظف</th>
             ${dates.map(date => `
               <th class="vertical-header" id="employee-day${selectedWeek}-${date.getDay()}">
                 <span class="day-name">${days[date.getDay()]}</span>
@@ -366,23 +375,12 @@ const renderTable = () => {
         <tbody>
           ${employees.map(emp => `
             <tr>
-              <td class="align-middle text-center table-primary fw-bold">${emp.name}</td>
+              <td class="align-middle text-center table-primary fw-bold employee-name-col">${emp.name}</td>
               ${dates.map(date => {
                 const dateStr = date.toISOString().split('T')[0];
                 const cellData = scheduleData[`${emp.id}_${dateStr}`] || {};
                 let cellClass = 'align-middle text-center';
-                if (cellData.type) {
-                  switch(cellData.type) {
-                    case 'off': cellClass += ' bg-off'; break;
-                    case 'leave': cellClass += ' bg-leave'; break;
-                    case 'event': cellClass += ' bg-event'; break;
-                    case 'hours8': cellClass += ' bg-hours8'; break;
-                    case 'hours14': cellClass += ' bg-hours14'; break;
-                    case 'store': cellClass += ' bg-store'; break;
-                  }
-                } else {
-                  cellClass += ' bg-white';
-                }
+                cellClass += getScheduleCellClass(cellData);
                 return `<td class="${cellClass}" style="cursor: pointer" data-date="${date.toISOString()}" data-employee="${emp.name}" data-employeeid="${emp.id}">${cellData.status || ''}</td>`;
               }).join('')}
             </tr>
@@ -408,68 +406,55 @@ const renderTable = () => {
         </thead>
         <tbody>
           <tr>
-            <td class="align-middle text-center bg-white text-dark fw-bold">8</td>
+            <td class="align-middle text-center bg-am fw-bold">AM</td>
             ${dates.map(date => {
               const dateStr = date.toISOString().split('T')[0];
-              let time8Count = 0;
+              let amCount = 0;
               employees.forEach(emp => {
                 const key = `${emp.id}_${dateStr}`;
                 const cellData = scheduleData[key] || {};
-                if (cellData.type === 'hours8') time8Count++;
+                if (normalizeScheduleType(cellData) === 'am') amCount++;
               });
-              return `<td class="text-center time-8 time-cell bg-hours8">${time8Count}</td>`;
+              return `<td class="text-center time-am time-cell bg-am">${amCount}</td>`;
             }).join('')}
           </tr>
           <tr>
-            <td class="align-middle text-center bg-white text-dark fw-bold">14</td>
+            <td class="align-middle text-center bg-pm fw-bold">PM</td>
             ${dates.map(date => {
               const dateStr = date.toISOString().split('T')[0];
-              let time14Count = 0;
+              let pmCount = 0;
               employees.forEach(emp => {
                 const key = `${emp.id}_${dateStr}`;
                 const cellData = scheduleData[key] || {};
-                if (cellData.type === 'hours14') time14Count++;
+                if (normalizeScheduleType(cellData) === 'pm') pmCount++;
               });
-              return `<td class="text-center time-14 time-cell bg-hours14">${time14Count}</td>`;
+              return `<td class="text-center time-pm time-cell bg-pm">${pmCount}</td>`;
             }).join('')}
           </tr>
           <tr>
-            <td class="align-middle text-center bg-leave fw-bold">إجازة</td>
+            <td class="align-middle text-center bg-leave fw-bold">أجازه</td>
             ${dates.map(date => {
               const dateStr = date.toISOString().split('T')[0];
               let leaveCount = 0;
               employees.forEach(emp => {
                 const key = `${emp.id}_${dateStr}`;
                 const cellData = scheduleData[key] || {};
-                if (cellData.type === 'leave') leaveCount++;
+                if (normalizeScheduleType(cellData) === 'leave') leaveCount++;
               });
               return `<td class="text-center leave time-cell bg-leave">${leaveCount}</td>`;
             }).join('')}
           </tr>
           <tr>
-            <td class="align-middle text-center bg-off fw-bold">OFF</td>
+            <td class="align-middle text-center bg-note fw-bold">ملاحظه</td>
             ${dates.map(date => {
               const dateStr = date.toISOString().split('T')[0];
-              let offCount = 0;
+              let noteCount = 0;
               employees.forEach(emp => {
                 const key = `${emp.id}_${dateStr}`;
                 const cellData = scheduleData[key] || {};
-                if (cellData.type === 'off') offCount++;
+                if (normalizeScheduleType(cellData) === 'note') noteCount++;
               });
-              return `<td class="text-center off time-cell bg-off">${offCount}</td>`;
-            }).join('')}
-          </tr>
-          <tr>
-            <td class="align-middle text-center bg-store fw-bold">ستور</td>
-            ${dates.map(date => {
-              const dateStr = date.toISOString().split('T')[0];
-              let storeCount = 0;
-              employees.forEach(emp => {
-                const key = `${emp.id}_${dateStr}`;
-                const cellData = scheduleData[key] || {};
-                if (cellData.type === 'store') storeCount++;
-              });
-              return `<td class="text-center store time-cell bg-store">${storeCount}</td>`;
+              return `<td class="text-center note time-cell bg-note">${noteCount}</td>`;
             }).join('')}
           </tr>
         </tbody>
@@ -499,18 +484,7 @@ const renderTable = () => {
                 const dateStr = date.toISOString().split('T')[0];
                 const cellData = supervisorsData[`${sup.id}_${dateStr}`] || {};
                 let cellClass = 'align-middle text-center';
-                if (cellData.type) {
-                  switch(cellData.type) {
-                    case 'off': cellClass += ' bg-off'; break;
-                    case 'leave': cellClass += ' bg-leave'; break;
-                    case 'event': cellClass += ' bg-event'; break;
-                    case 'hours8': cellClass += ' bg-hours8'; break;
-                    case 'hours14': cellClass += ' bg-hours14'; break;
-                    case 'store': cellClass += ' bg-store'; break;
-                  }
-                } else {
-                  cellClass += ' bg-white';
-                }
+                cellClass += getScheduleCellClass(cellData);
                 return `<td class="${cellClass}" style="cursor: pointer" data-date="${date.toISOString()}" data-supervisor="${sup.name}" data-supervisorid="${sup.id}">${cellData.status || ''}</td>`;
               }).join('')}
             </tr>
@@ -674,14 +648,27 @@ function showDropdown(event, cell, type) {
   currentCell = cell;
   currentCellType = type; // إضافة نوع الخلية (موظف أو مشرف)
   const dropdown = document.getElementById("dropdownMenu");
+  const cellRect = cell.getBoundingClientRect();
+
   dropdown.style.display = "block";
-  dropdown.style.top = `${event.pageY}px`;
-  dropdown.style.left = `${event.pageX - 120}px`;
+  dropdown.style.position = "fixed";
+  dropdown.style.zIndex = "1050";
+
+  const margin = 8;
+  const dropdownWidth = dropdown.offsetWidth || 160;
+  const left = Math.max(
+    margin,
+    Math.min(cellRect.right - dropdownWidth, window.innerWidth - dropdownWidth - margin)
+  );
+
+  dropdown.style.top = `${cellRect.bottom + 4}px`;
+  dropdown.style.left = `${left}px`;
 }
 
 function makeCellEditable(cell) {
   // إنشاء حقل إدخال
   const input = document.createElement('input');
+  let isSaved = false;
   input.type = 'text';
   input.className = 'form-control form-control-sm text-center';
   input.style.width = '100%';
@@ -699,27 +686,24 @@ function makeCellEditable(cell) {
   input.style.bottom = '0';
   input.style.boxShadow = '0 0 0 2px rgba(0,123,255,0.25)';
   input.style.textAlign = 'center';
-  input.dir = 'ltr';
+  input.dir = 'auto';
+  input.value = cell.textContent.trim();
+  input.placeholder = 'اكتب ملاحظه';
   
   // جعل الخلية relative لتحديد موقع حقل الإدخال
   cell.style.position = 'relative';
   
   function validateAndUpdate() {
+    if (isSaved) return;
+    isSaved = true;
     const value = input.value.trim();
-    if (value === '8' || value === '14') {
-      const status = value === '8' ? '8 ساعات' : '14 ساعة';
-      const cellType = value === '8' ? 'hours8' : 'hours14';
-      updateCell(cell, status, cellType);
-      input.remove();
+    if (value) {
+      updateCell(cell, value, 'note');
     } else {
-      // تغيير لون الإطار إلى أحمر عند القيمة غير الصحيحة
-      input.style.border = '1px solid #dc3545';
-      input.style.boxShadow = '0 0 0 2px rgba(220,53,69,0.25)';
-      // مسح القيمة الموجودة
-      input.value = '';
-      // إعادة التركيز على الحقل
-      input.focus();
+      clearCell(cell);
     }
+    input.remove();
+    currentCell = null;
   }
   
   // إضافة مستمعي الأحداث
@@ -766,32 +750,48 @@ function updateCell(cell, status, cellType) {
   renderTable();
 }
 
+function clearCell(cell) {
+  const type = cell.dataset.supervisor ? 'supervisor' : 'employee';
+  const id = cell.dataset.supervisorid || cell.dataset.employeeid;
+  const date = new Date(cell.dataset.date);
+  const dateStr = date.toISOString().split('T')[0];
+  const key = `${id}_${dateStr}`;
+
+  if (type === 'supervisor') {
+    delete supervisorsData[key];
+    saveSupervisorsData();
+  } else {
+    delete scheduleData[key];
+    saveScheduleData();
+  }
+
+  renderTable();
+}
+
 function selectOption(type) {
   if (!currentCell) return;
   let status = "";
   let cellType = "";
 
   switch (type) {
-    case "add":
+    case "note":
       document.getElementById("dropdownMenu").style.display = "none";
       makeCellEditable(currentCell);
       return;
+    case "am":
+      status = "AM";
+      cellType = "am";
+      break;
+    case "pm":
+      status = "PM";
+      cellType = "pm";
+      break;
     case "leave":
-      status = "إجازة";
+      status = "أجازه";
       cellType = "leave";
       break;
-    case "event":
-      status = "مناسبة";
-      cellType = "event";
-      break;
-    case "off":
-      status = "OFF";
-      cellType = "off";
-      break;
-    case "store":
-      status = "ستور";
-      cellType = "store";
-      break;
+    default:
+      return;
   }
 
   updateCell(currentCell, status, cellType);
@@ -928,10 +928,10 @@ document.addEventListener('DOMContentLoaded', () => {
     yearSelect.appendChild(option);
   }
 
-  // تحميل الجدول مع القيم المحفوظة
-  setTimeout(() => {
+  // تحميل الجدول بعد وصول بيانات الموظفين والجداول من السيرفر
+  loadTimetableData().always(() => {
     renderTable();
-  }, 500);
+  });
 
 });
 
@@ -962,28 +962,26 @@ function updateTimeDistributionTable() {
   });
 
   // إعادة تعيين العدادات
-  const time8Cells = document.querySelectorAll('.time-8');
-  const time14Cells = document.querySelectorAll('.time-14');
+  const amCells = document.querySelectorAll('.time-am');
+  const pmCells = document.querySelectorAll('.time-pm');
   const leaveCells = document.querySelectorAll('.leave');
-  const offCells = document.querySelectorAll('.off');
-  const storeCells = document.querySelectorAll('.store');
+  const noteCells = document.querySelectorAll('.note');
 
   // التحقق من وجود الخلايا قبل تحديثها
-  if (time8Cells.length === 0 || time14Cells.length === 0 || 
-      leaveCells.length === 0 || offCells.length === 0 || 
-      storeCells.length === 0) return;
+  if (amCells.length === 0 || pmCells.length === 0 ||
+      leaveCells.length === 0 || noteCells.length === 0) return;
 
   // إعادة تعيين الألوان والعدادات
-  time8Cells.forEach(cell => {
+  amCells.forEach(cell => {
     if (cell) {
       cell.textContent = '0';
-      cell.className = 'text-center time-8 bg-hours8';
+      cell.className = 'text-center time-am bg-am';
     }
   });
-  time14Cells.forEach(cell => {
+  pmCells.forEach(cell => {
     if (cell) {
       cell.textContent = '0';
-      cell.className = 'text-center time-14 bg-hours14';
+      cell.className = 'text-center time-pm bg-pm';
     }
   });
   leaveCells.forEach(cell => {
@@ -992,56 +990,45 @@ function updateTimeDistributionTable() {
       cell.className = 'text-center leave bg-leave';
     }
   });
-  offCells.forEach(cell => {
+  noteCells.forEach(cell => {
     if (cell) {
       cell.textContent = '0';
-      cell.className = 'text-center off bg-off';
-    }
-  });
-  storeCells.forEach(cell => {
-    if (cell) {
-      cell.textContent = '0';
-      cell.className = 'text-center store bg-store';
+      cell.className = 'text-center note bg-note';
     }
   });
 
   // حساب التوزيع لكل يوم
   dates.forEach((date, dayIndex) => {
     const dateStr = date.toISOString().split('T')[0];
-    let time8Count = 0;
-    let time14Count = 0;
+    let amCount = 0;
+    let pmCount = 0;
     let leaveCount = 0;
-    let offCount = 0;
-    let storeCount = 0;
+    let noteCount = 0;
 
     employees.forEach(emp => {
       const key = `${emp.id}_${dateStr}`;
       const cellData = scheduleData[key] || {};
       
-      switch(cellData.type) {
-        case 'hours8':
-          time8Count++;
+      switch(normalizeScheduleType(cellData)) {
+        case 'am':
+          amCount++;
           break;
-        case 'hours14':
-          time14Count++;
+        case 'pm':
+          pmCount++;
           break;
         case 'leave':
           leaveCount++;
           break;
-        case 'off':
-          offCount++;
-          break;
-        case 'store':
-          storeCount++;
+        case 'note':
+          noteCount++;
           break;
       }
     });
 
     // تحديث الخلايا في جدول التوزيع مع التحقق من وجودها
-    if (time8Cells[dayIndex]) time8Cells[dayIndex].textContent = time8Count;
-    if (time14Cells[dayIndex]) time14Cells[dayIndex].textContent = time14Count;
+    if (amCells[dayIndex]) amCells[dayIndex].textContent = amCount;
+    if (pmCells[dayIndex]) pmCells[dayIndex].textContent = pmCount;
     if (leaveCells[dayIndex]) leaveCells[dayIndex].textContent = leaveCount;
-    if (offCells[dayIndex]) offCells[dayIndex].textContent = offCount;
-    if (storeCells[dayIndex]) storeCells[dayIndex].textContent = storeCount;
+    if (noteCells[dayIndex]) noteCells[dayIndex].textContent = noteCount;
   });
-} 
+}

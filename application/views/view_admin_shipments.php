@@ -2,7 +2,7 @@
 <?php $this->load->view('view_header'); ?>
 <?php $this->load->view('view_admin_sidebar');?>
 
-<div class="app-content admin-ui-shipments">
+<div class="app-content admin-ui-page admin-ui-shipments">
   <div class="app-content-header">
 
     <h1 class="app-content-headerText">الشحنات</h1>

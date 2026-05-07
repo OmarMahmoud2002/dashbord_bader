@@ -12,7 +12,7 @@ $CI2->load->model('Excel_import_model');
 
 	<?php $this->view('view_admin_sidebar'); ?>
 
-     <div class="app-content admin-ui-lock-track">
+     <div class="app-content admin-ui-page admin-ui-lock-track">
       <div class="app-content-header">
 
         <h1 class="app-content-headerText">تأكيد التقفيلة</h1>
@@ -265,6 +265,7 @@ $CI2->load->model('Excel_import_model');
 
             // Activate the first tab by default
             tabs[0].click();
+
         });
     </script>
 

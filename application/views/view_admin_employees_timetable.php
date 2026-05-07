@@ -2,7 +2,7 @@
 <?php $this->load->view('view_header'); ?>
 <?php $this->load->view('view_admin_sidebar');?>
 
-<link href="<?=base_url('public/css/employees_timetable.css')?>" rel="stylesheet">
+<link href="<?=base_url('public/css/employees_timetable.css')?>?a=<?php $date=date_create();echo date_timestamp_get($date);?>" rel="stylesheet">
 
 <style>
   body {
@@ -106,11 +106,10 @@
 
   <!-- Dropdown menu -->
   <div id="dropdownMenu" class="dropdown-menu shadow-sm" style="display: none;">
-    <button class="dropdown-item bg-brown-custom" onclick="selectOption('add')">إضافة وقت</button>
-    <button class="dropdown-item bg-leave" onclick="selectOption('leave')">إجازة</button>
-    <button class="dropdown-item bg-event" onclick="selectOption('event')">مناسبة</button>
-    <button class="dropdown-item bg-off" onclick="selectOption('off')">OFF</button>
-    <button class="dropdown-item bg-store" onclick="selectOption('store')">ستور</button>
+    <button class="dropdown-item bg-am" onclick="selectOption('am')">AM</button>
+    <button class="dropdown-item bg-pm" onclick="selectOption('pm')">PM</button>
+    <button class="dropdown-item bg-leave" onclick="selectOption('leave')">أجازه</button>
+    <button class="dropdown-item bg-note" onclick="selectOption('note')">ملاحظه</button>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>

@@ -43,6 +43,15 @@ class Other extends MY_Controller {
 		return $ids;
 	}
 
+	public function index()
+	{
+		if(!in_array($this->session->userdata('user_id'), $this->get_admins())) {
+			redirect(base_url());
+		}
+
+		$this->load->view('view_admin_home', $this->data);
+	}
+
 	function get_serials_categories() {
 	    if(!in_array($this->session->userdata('user_id'), $this->get_admins())) {
 		    redirect(base_url());
@@ -475,7 +484,93 @@ class Other extends MY_Controller {
 		    redirect(base_url());
 		}
 
+		$this->data['forms_data_url'] = base_url().MOD_VALUE.'admin/forms-data';
 		$this->load->view('view_admin_forms', $this->data);
+	}
+
+	function forms_settings() {
+		if(!in_array($this->session->userdata('user_id'), $this->get_admins())) {
+		    redirect(base_url());
+		}
+
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+			$this->Variables->setdata('forms_manager_name', $this->encode_forms_value($this->input->post('manager_name', true)));
+			$this->Variables->setdata('forms_manager_employee_id', $this->encode_forms_value($this->input->post('manager_employee_id', true)));
+			$this->Variables->setdata('forms_stamp', $this->encode_forms_value($this->input->post('stamp', true)));
+			$this->Variables->setdata('forms_store_name', $this->encode_forms_value($this->input->post('store_name', true)));
+
+			$this->session->set_flashdata('success', 'تم حفظ إعدادات النماذج بنجاح');
+			redirect(base_url().MOD_VALUE.'admin/forms-settings');
+		}
+
+		$this->data['forms_settings'] = $this->get_forms_defaults();
+		$this->load->view('view_admin_forms_settings', $this->data);
+	}
+
+	function forms_data() {
+		if(!in_array($this->session->userdata('user_id'), $this->get_admins())) {
+			$this->output->set_status_header(403);
+			echo json_encode(['status' => 'error'], JSON_UNESCAPED_UNICODE);
+			return;
+		}
+
+		$employees = [];
+		foreach ($this->Model_admin->getemployees() as $employee) {
+			$employee_number = '';
+			if (isset($employee['job_number']) && $employee['job_number'] !== '') {
+				$employee_number = $employee['job_number'];
+			} else if (isset($employee['user_employee_Id'])) {
+				$employee_number = $employee['user_employee_Id'];
+			}
+
+			$employees[] = [
+				'id' => isset($employee['user_id']) ? $employee['user_id'] : '',
+				'name' => isset($employee['user_fillname']) ? $employee['user_fillname'] : '',
+				'employee_number' => $employee_number,
+			];
+		}
+
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode([
+				'status' => 'ok',
+				'settings' => $this->get_forms_defaults(),
+				'employees' => $employees,
+			], JSON_UNESCAPED_UNICODE));
+	}
+
+	private function get_forms_defaults() {
+		$keys = ['forms_manager_name', 'forms_manager_employee_id', 'forms_stamp', 'forms_store_name'];
+		$values = $this->Variables->getmany($keys);
+
+		return [
+			'manager_name' => isset($values['forms_manager_name']) ? $this->decode_forms_value($values['forms_manager_name']) : '',
+			'manager_employee_id' => isset($values['forms_manager_employee_id']) ? $this->decode_forms_value($values['forms_manager_employee_id']) : '',
+			'stamp' => isset($values['forms_stamp']) ? $this->decode_forms_value($values['forms_stamp']) : '',
+			'store_name' => isset($values['forms_store_name']) ? $this->decode_forms_value($values['forms_store_name']) : '',
+		];
+	}
+
+	private function encode_forms_value($value) {
+		$value = $value === null ? '' : $value;
+		return 'b64:' . base64_encode($value);
+	}
+
+	private function decode_forms_value($value) {
+		if ($value === null || $value === '') {
+			return '';
+		}
+
+		if (strpos($value, 'b64:') === 0) {
+			$decoded = base64_decode(substr($value, 4), true);
+			return $decoded === false ? '' : $decoded;
+		}
+
+		if (preg_match('/^[?\s]+$/', $value)) {
+			return '';
+		}
+
+		return $value;
 	}
 
 
@@ -573,6 +668,7 @@ class Other extends MY_Controller {
 		// إذا كانت هناك بيانات موظف، اعرض صفحة النتائج
 		if ($data['employee_data']) {
             $this->load->view('employee_sales/view_admin_employee_sales_details', $this->data);
+			return;
         }
 
         // إذا لم يكن هناك بيانات موظف، اعرض صفحة البحث العادية (نموذج فارغ)

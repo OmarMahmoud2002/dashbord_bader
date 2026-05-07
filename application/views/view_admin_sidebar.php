@@ -4,8 +4,9 @@ $segment_2 = 0;
 $segment_2 = $CI->uri->segment('2');
 $segment_3 = 0;
 $segment_3 = $CI->uri->segment('3');
+$forms_query = $CI->input->get('form', TRUE);
+$active_form = ($forms_query === 'settlement') ? 'settlement' : 'replacement';
 ?>
-<link rel="stylesheet" href="<?php echo base_url(); ?>public/css/admin-ui-pattern.css?a=<?php $date=date_create();echo date_timestamp_get($date);?>">
 <script>
   var adminUiPath = window.location.pathname;
   document.body.classList.add('admin-ui-shell');
@@ -104,6 +105,12 @@ $segment_3 = $CI->uri->segment('3');
     <div class="app-container">
     <div class="sidebar">
       <ul class="sidebar-list">
+        <li class="sidebar-list-item <?php if($segment_2 == 'index') {echo 'active';} ?>">
+          <a href="<?php echo base_url().MOD_VALUE.'admin/index'; ?>">
+            <i class="bi bi-house-door"></i>
+            <span>الصفحة الرئيسية</span>
+          </a>
+        </li>
         <li class="sidebar-list-item <?php if($segment_2 == 'products' && $segment_3 == 'search') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/products/search'; ?>">
             <i class="bi bi-search"></i>
@@ -200,11 +207,31 @@ $segment_3 = $CI->uri->segment('3');
             <span>جرد المخزون</span>
           </a>
         </li>
-        <li class="sidebar-list-item <?php if($segment_2 == 'forms') {echo 'active';} ?>">
-          <a href="<?php echo base_url().MOD_VALUE.'admin/forms'; ?>">
+        <li class="sidebar-list-item has-submenu <?php if($segment_2 == 'forms' || $segment_2 == 'forms-settings') {echo 'active submenu-open';} ?>">
+          <a href="<?php echo base_url().MOD_VALUE.'admin/forms?form=settlement'; ?>" class="sidebar-submenu-toggle">
             <i class="bi bi-ui-checks"></i>
             <span>نماذج</span>
           </a>
+          <ul class="sidebar-submenu">
+            <li>
+              <a href="<?php echo base_url().MOD_VALUE.'admin/forms?form=settlement'; ?>" class="<?php if($segment_2 == 'forms' && $active_form == 'settlement') {echo 'active';} ?>">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>نموذج تسوية الغرامة</span>
+              </a>
+            </li>
+            <li>
+              <a href="<?php echo base_url().MOD_VALUE.'admin/forms?form=replacement'; ?>" class="<?php if($segment_2 == 'forms' && $active_form == 'replacement') {echo 'active';} ?>">
+                <i class="bi bi-phone"></i>
+                <span>استبدال الجهاز</span>
+              </a>
+            </li>
+            <li>
+              <a href="<?php echo base_url().MOD_VALUE.'admin/forms-settings'; ?>" class="<?php if($segment_2 == 'forms-settings') {echo 'active';} ?>">
+                <i class="bi bi-sliders"></i>
+                <span>إعدادات النماذج</span>
+              </a>
+            </li>
+          </ul>
         </li>
         <li class="sidebar-list-item <?php if($segment_2 == 'settings') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/settings'; ?>">

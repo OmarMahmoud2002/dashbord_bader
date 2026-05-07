@@ -11,12 +11,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <a href="index.html" class="sidebar-btn">استبدال أجهزة</a>
-        <a href="index2.html" class="sidebar-btn active">تسوية غرامة</a>
-    </div>
-    
     <div class="container" id="formContainer">
         <div class="form-wrapper">
             <!-- Header -->
@@ -52,7 +46,7 @@
                     <td class="label-cell">تاريخ تأسيس الخدمة</td>
                     <td class="input-cell"><input type="text" class="form-input date-picker" ></td>
                     <td class="label-cell">تاريخ إلغاء الخدمة</td>
-                    <td class="input-cell"><input type="text" class="form-input date-picker" ></td>
+                    <td class="input-cell"><input type="text" class="form-input date-picker" id="serviceCancelDate"></td>
                 </tr>
                 <tr>
                     <td class="label-cell">الرقم التسلسلي للجهاز</td>
@@ -109,7 +103,7 @@
                     <td class="label-cell">التوقيع</td>
                     <td class="input-cell"><input type="text" class="form-input"></td>
                     <td class="label-cell">التاريخ</td>
-                    <td class="input-cell"><input type="text" class="form-input date-picker" ></td>
+                    <td class="input-cell"><input type="text" class="form-input date-picker" data-sync-from-cancel-date></td>
                 </tr>
                 <tr>
                     <td class="label-cell">مدير المكتب</td>
@@ -121,7 +115,7 @@
                     <td class="label-cell">التوقيع</td>
                     <td class="input-cell"><input type="text" class="form-input"></td>
                     <td class="label-cell">التاريخ</td>
-                    <td class="input-cell"><input type="text" class="form-input date-picker"></td>
+                    <td class="input-cell"><input type="text" class="form-input date-picker" data-sync-from-cancel-date></td>
                 </tr>
                 <tr>
                     <td class="label-cell">إسم المكتب</td>
@@ -141,6 +135,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script>
+    <script src="forms_common.js"></script>
     <script src="script2.js"></script>
 </body>
 </html>
