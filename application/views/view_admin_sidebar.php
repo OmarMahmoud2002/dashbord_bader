@@ -27,6 +27,7 @@ $active_form = ($forms_query === 'settlement') ? 'settlement' : 'replacement';
     if (path.indexOf('/employees_timetable') !== -1) content.classList.add('admin-ui-timetable');
     if (path.indexOf('/employees_sales') !== -1) content.classList.add('admin-ui-employee-sales');
     if (path.indexOf('/admins') !== -1) content.classList.add('admin-ui-admins');
+    if (path.indexOf('/permissions') !== -1) content.classList.add('admin-ui-permissions');
     if (path.indexOf('/products/add') !== -1 || path.indexOf('/products/edit') !== -1 || path.indexOf('/upload') !== -1) {
       content.classList.add('admin-ui-product-form');
     }
@@ -207,7 +208,7 @@ $active_form = ($forms_query === 'settlement') ? 'settlement' : 'replacement';
             <span>جرد المخزون</span>
           </a>
         </li>
-        <li class="sidebar-list-item has-submenu <?php if($segment_2 == 'forms' || $segment_2 == 'forms-settings') {echo 'active submenu-open';} ?>">
+        <li class="sidebar-list-item has-submenu <?php if($segment_2 == 'forms') {echo 'active submenu-open';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/forms?form=settlement'; ?>" class="sidebar-submenu-toggle">
             <i class="bi bi-ui-checks"></i>
             <span>نماذج</span>
@@ -225,13 +226,13 @@ $active_form = ($forms_query === 'settlement') ? 'settlement' : 'replacement';
                 <span>استبدال الجهاز</span>
               </a>
             </li>
-            <li>
-              <a href="<?php echo base_url().MOD_VALUE.'admin/forms-settings'; ?>" class="<?php if($segment_2 == 'forms-settings') {echo 'active';} ?>">
-                <i class="bi bi-sliders"></i>
-                <span>إعدادات النماذج</span>
-              </a>
-            </li>
           </ul>
+        </li>
+        <li class="sidebar-list-item <?php if($segment_2 == 'permissions') {echo 'active';} ?>">
+          <a href="<?php echo base_url().MOD_VALUE.'admin/permissions'; ?>">
+            <i class="bi bi-ui-checks-grid"></i>
+            <span>الصلاحيات</span>
+          </a>
         </li>
         <li class="sidebar-list-item <?php if($segment_2 == 'settings') {echo 'active';} ?>">
           <a href="<?php echo base_url().MOD_VALUE.'admin/settings'; ?>">

@@ -16,23 +16,26 @@
   </div>
   <div id="shipmentsTable" class="products-area-wrapper tableView">
     <div class="products-header">
-      <div class="product-cell ship_num">رقم الشحنة</div>
-      <div class="product-cell nums">عدد الأكياس</div>
-      <div class="product-cell date">تاريخ الشحنة</div>
-      <div class="product-cell delivery_date">تاريخ التسليم</div>
+      <div class="product-cell ship_num sortable-cell" data-sort-key="ship_num" data-sort-type="text">رقم الشحنة <i class="bi bi-arrow-down-up"></i></div>
+      <div class="product-cell nums sortable-cell" data-sort-key="nums" data-sort-type="number">عدد الأكياس <i class="bi bi-arrow-down-up"></i></div>
+      <div class="product-cell date sortable-cell" data-sort-key="date" data-sort-type="date">تاريخ الشحنة <i class="bi bi-arrow-down-up"></i></div>
+      <div class="product-cell delivery_date sortable-cell" data-sort-key="delivery_date" data-sort-type="date">تاريخ التسليم <i class="bi bi-arrow-down-up"></i></div>
       <div class="product-cell actions"></div>
     </div>
     <?php foreach ($shipments as $shipment) { ?>
+        <?php
+          $delivery_date_value = (!empty($shipment->delivery_date) && $shipment->delivery_date != '0000-00-00') ? $shipment->delivery_date : '';
+        ?>
         <div class="products-row" id = '<?=safe_data($shipment->id)?>' data-packs = '<?=safe_data($shipment->packs)?>'>
-          <div class="product-cell ship_num"><span class="cell-label">رقم الشحنة</span><?=safe_data($shipment->shipment_number)?></div>
-          <div class="product-cell nums"><span class="cell-label">عدد الأكياس</span><?=safe_data($shipment->packs_number)?></div>
-          <div class="product-cell date"><span class="cell-label">تاريخ الشحنة</span><?=date_format(date_create($shipment->date_created), 'd/m/Y h:i:s A')?></div>
-          <div class="product-cell delivery_date">
+          <div class="product-cell ship_num" data-sort-value="<?=safe_data($shipment->shipment_number)?>"><span class="cell-label">رقم الشحنة</span><?=safe_data($shipment->shipment_number)?></div>
+          <div class="product-cell nums" data-sort-value="<?=safe_data($shipment->packs_number)?>"><span class="cell-label">عدد الأكياس</span><?=safe_data($shipment->packs_number)?></div>
+          <div class="product-cell date" data-sort-value="<?=safe_data($shipment->date_created)?>"><span class="cell-label">تاريخ الشحنة</span><?=date_format(date_create($shipment->date_created), 'd/m/Y h:i:s A')?></div>
+          <div class="product-cell delivery_date" data-sort-value="<?=safe_data($delivery_date_value)?>">
             <span class="cell-label">تاريخ التسليم</span>
-            <?php if (!empty($shipment->delivery_date) && $shipment->delivery_date != '0000-00-00') { ?>
+            <?php if ($delivery_date_value !== '') { ?>
               <span class="shipment-delivery-badge"><?=date_format(date_create($shipment->delivery_date), 'd/m/Y')?></span>
             <?php } else { ?>
-              <span class="shipment-delivery-badge shipment-pending">لم يتم التسليم</span>
+              <span class="shipment-empty-date"></span>
             <?php } ?>
           </div>
           <div class="product-cell actions">

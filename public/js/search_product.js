@@ -31,7 +31,6 @@ function sync_product_search_layout() {
     if (!prod_form || !prod_infos) return;
     const hasResult = !prod_infos.classList.contains('hide');
     prod_form.classList.toggle('has-result', hasResult);
-    document.body.classList.toggle('product-details-open', hasResult);
 }
 
 if (prod_form && prod_infos) {
@@ -50,14 +49,6 @@ function close_product_details() {
 
 if (productDetailsClose) {
   productDetailsClose.addEventListener("click", close_product_details);
-}
-
-if (prod_infos) {
-  prod_infos.addEventListener("click", (event) => {
-    if (event.target === prod_infos) {
-      close_product_details();
-    }
-  });
 }
 
 document.addEventListener("keydown", (event) => {

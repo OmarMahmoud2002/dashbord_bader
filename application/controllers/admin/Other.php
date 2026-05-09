@@ -52,6 +52,267 @@ class Other extends MY_Controller {
 		$this->load->view('view_admin_home', $this->data);
 	}
 
+	public function permissions()
+	{
+		if(!in_array($this->session->userdata('user_id'), $this->get_admins())) {
+			redirect(base_url());
+		}
+
+		$this->data['permission_groups'] = $this->get_admin_permissions_catalog();
+		$this->data['demo_roles'] = [
+			[
+				'name' => 'مدير كامل',
+				'description' => 'كل صفحات وأكشنز لوحة التحكم',
+				'badge' => 'كامل',
+				'permissions' => 'all'
+			],
+			[
+				'name' => 'مسؤول مخزن',
+				'description' => 'المنتجات والرفوف والبحث والتسليم',
+				'badge' => 'تشغيلي',
+				'permissions' => [
+					'product_search.view', 'product_search.cart.add', 'product_search.cart.remove',
+					'product_search.custody.create', 'product_search.delivery.create',
+					'product_search.custody.return', 'product_search.delivery.return',
+					'products.view', 'products.import', 'products.edit.view', 'products.update.basic',
+					'products.update.extra', 'products.low.view', 'operations.view',
+					'shelves.view', 'shelves.create', 'shelves.rearrange', 'shelves.delete',
+					'shelves.items.view', 'shelves.items.remove'
+				]
+			],
+			[
+				'name' => 'مسؤول شحنات',
+				'description' => 'إضافة وتسليم وحذف الشحنات ورؤية الأكياس',
+				'badge' => 'شحن',
+				'permissions' => [
+					'shipments.view', 'shipments.create', 'shipments.deliver',
+					'shipments.delete', 'shipments.packs.view'
+				]
+			],
+			[
+				'name' => 'مشاهد فقط',
+				'description' => 'فتح الصفحات بدون تنفيذ تعديلات',
+				'badge' => 'قراءة',
+				'permissions' => [
+					'home.view', 'product_search.view', 'products.view', 'products.low.view',
+					'operations.view', 'shelves.view', 'shelves.items.view', 'employees.view',
+					'employees_sales.view', 'employees_timetable.view', 'admins.view',
+					'requests.view', 'sales.view', 'settlements.view', 'shipments.view',
+					'lock_admin.view', 'lock_track.view', 'forms.view', 'settings.view'
+				]
+			]
+		];
+
+		$this->load->view('view_admin_permissions', $this->data);
+	}
+
+	private function get_admin_permissions_catalog()
+	{
+		return [
+			[
+				'section' => 'الصفحات الرئيسية والمخزون',
+				'icon' => 'bi-box-seam',
+				'pages' => [
+					[
+						'label' => 'الصفحة الرئيسية',
+						'route' => 'admin/index',
+						'permissions' => [
+							['key' => 'home.view', 'label' => 'عرض الصفحة', 'type' => 'view'],
+						],
+					],
+					[
+						'label' => 'البحث عن منتج',
+						'route' => 'admin/products/search',
+						'permissions' => [
+							['key' => 'product_search.view', 'label' => 'عرض الصفحة', 'type' => 'view'],
+							['key' => 'product_search.cart.add', 'label' => 'إضافة للسلة', 'type' => 'create'],
+							['key' => 'product_search.cart.remove', 'label' => 'حذف من السلة', 'type' => 'delete'],
+							['key' => 'product_search.custody.create', 'label' => 'تسليم لموظف', 'type' => 'special'],
+							['key' => 'product_search.delivery.create', 'label' => 'تسليم للتوصيل', 'type' => 'special'],
+							['key' => 'product_search.custody.return', 'label' => 'إرجاع من عهدة', 'type' => 'special'],
+							['key' => 'product_search.delivery.return', 'label' => 'إرجاع من التوصيل', 'type' => 'special'],
+						],
+					],
+					[
+						'label' => 'المنتجات',
+						'route' => 'admin/dashboard',
+						'permissions' => [
+							['key' => 'products.view', 'label' => 'عرض المنتجات', 'type' => 'view'],
+							['key' => 'products.import', 'label' => 'رفع ملف مخزون', 'type' => 'create'],
+							['key' => 'products.edit.view', 'label' => 'فتح صفحة التعديل', 'type' => 'update'],
+							['key' => 'products.update.basic', 'label' => 'تعديل البيانات الأساسية', 'type' => 'update'],
+							['key' => 'products.update.extra', 'label' => 'تعديل بيانات إضافية', 'type' => 'update'],
+						],
+					],
+					[
+						'label' => 'منخفض الكمية',
+						'route' => 'admin/products/low',
+						'permissions' => [
+							['key' => 'products.low.view', 'label' => 'عرض الصفحة', 'type' => 'view'],
+						],
+					],
+					[
+						'label' => 'العمليات',
+						'route' => 'admin/products/operations',
+						'permissions' => [
+							['key' => 'operations.view', 'label' => 'عرض سجل العمليات', 'type' => 'view'],
+						],
+					],
+				],
+			],
+			[
+				'section' => 'الرفوف والموظفين',
+				'icon' => 'bi-people',
+				'pages' => [
+					[
+						'label' => 'الرفوف',
+						'route' => 'admin/shelves',
+						'permissions' => [
+							['key' => 'shelves.view', 'label' => 'عرض الرفوف', 'type' => 'view'],
+							['key' => 'shelves.create', 'label' => 'إضافة رف', 'type' => 'create'],
+							['key' => 'shelves.rearrange', 'label' => 'ترتيب/نقل منتجات', 'type' => 'update'],
+							['key' => 'shelves.delete', 'label' => 'حذف رف', 'type' => 'delete'],
+							['key' => 'shelves.items.view', 'label' => 'عرض منتجات الرف', 'type' => 'special'],
+							['key' => 'shelves.items.remove', 'label' => 'إزالة منتج من الرف', 'type' => 'special'],
+						],
+					],
+					[
+						'label' => 'الموظفين',
+						'route' => 'admin/employees',
+						'permissions' => [
+							['key' => 'employees.view', 'label' => 'عرض الموظفين', 'type' => 'view'],
+							['key' => 'employees.create', 'label' => 'إضافة موظف', 'type' => 'create'],
+							['key' => 'employees.detail', 'label' => 'فتح تفاصيل موظف', 'type' => 'view'],
+							['key' => 'employees.update', 'label' => 'تعديل بيانات موظف', 'type' => 'update'],
+							['key' => 'employees.delete', 'label' => 'حذف موظف', 'type' => 'delete'],
+							['key' => 'employees.custody.create', 'label' => 'إضافة عهدة', 'type' => 'special'],
+							['key' => 'employees.settlement.create', 'label' => 'إضافة تسوية', 'type' => 'special'],
+						],
+					],
+					[
+						'label' => 'مبيعات الموظفين',
+						'route' => 'admin/employees_sales_page',
+						'permissions' => [
+							['key' => 'employees_sales.view', 'label' => 'عرض الصفحة', 'type' => 'view'],
+							['key' => 'employees_sales.upload', 'label' => 'رفع ملف مبيعات', 'type' => 'create'],
+							['key' => 'employees_sales.search', 'label' => 'بحث في المبيعات', 'type' => 'special'],
+							['key' => 'employees_sales.download', 'label' => 'تحميل بيانات موظف', 'type' => 'special'],
+						],
+					],
+					[
+						'label' => 'جداول الموظفين',
+						'route' => 'admin/employees_timetable',
+						'permissions' => [
+							['key' => 'employees_timetable.view', 'label' => 'عرض الجداول', 'type' => 'view'],
+							['key' => 'employees_timetable.save', 'label' => 'حفظ جدول موظف', 'type' => 'update'],
+							['key' => 'employees_timetable.supervisors.view', 'label' => 'عرض جداول المشرفين', 'type' => 'special'],
+						],
+					],
+				],
+			],
+			[
+				'section' => 'الإدارة والحركة المالية',
+				'icon' => 'bi-shield-check',
+				'pages' => [
+					[
+						'label' => 'المديرين',
+						'route' => 'admin/admins',
+						'permissions' => [
+							['key' => 'admins.view', 'label' => 'عرض المديرين', 'type' => 'view'],
+							['key' => 'admins.create', 'label' => 'إضافة مدير', 'type' => 'create'],
+							['key' => 'admins.update', 'label' => 'تعديل مدير', 'type' => 'update'],
+							['key' => 'admins.delete', 'label' => 'حذف مدير', 'type' => 'delete'],
+							['key' => 'admins.assign_role', 'label' => 'تعيين صلاحية', 'type' => 'special'],
+						],
+					],
+					[
+						'label' => 'الصلاحيات',
+						'route' => 'admin/permissions',
+						'permissions' => [
+							['key' => 'roles.view', 'label' => 'عرض الصفحة', 'type' => 'view'],
+							['key' => 'roles.create', 'label' => 'إنشاء صلاحية', 'type' => 'create'],
+							['key' => 'roles.update', 'label' => 'تعديل صلاحية', 'type' => 'update'],
+							['key' => 'roles.delete', 'label' => 'حذف صلاحية', 'type' => 'delete'],
+						],
+					],
+					[
+						'label' => 'الطلبات',
+						'route' => 'admin/requests',
+						'permissions' => [
+							['key' => 'requests.view', 'label' => 'عرض الطلبات', 'type' => 'view'],
+							['key' => 'requests.return', 'label' => 'إرجاع منتج للتخزين', 'type' => 'special'],
+						],
+					],
+					[
+						'label' => 'المبيعات',
+						'route' => 'admin/sales',
+						'permissions' => [
+							['key' => 'sales.view', 'label' => 'عرض المبيعات', 'type' => 'view'],
+						],
+					],
+					[
+						'label' => 'الفروقات',
+						'route' => 'admin/settlements',
+						'permissions' => [
+							['key' => 'settlements.view', 'label' => 'عرض الفروقات', 'type' => 'view'],
+							['key' => 'settlements.create', 'label' => 'إضافة تسوية', 'type' => 'create'],
+						],
+					],
+				],
+			],
+			[
+				'section' => 'الشحنات والتقفيلة والنماذج',
+				'icon' => 'bi-truck',
+				'pages' => [
+					[
+						'label' => 'الشحنات',
+						'route' => 'admin/shipments',
+						'permissions' => [
+							['key' => 'shipments.view', 'label' => 'عرض الشحنات', 'type' => 'view'],
+							['key' => 'shipments.create', 'label' => 'إضافة شحنة', 'type' => 'create'],
+							['key' => 'shipments.deliver', 'label' => 'تسليم شحنة', 'type' => 'update'],
+							['key' => 'shipments.delete', 'label' => 'حذف شحنة', 'type' => 'delete'],
+							['key' => 'shipments.packs.view', 'label' => 'رؤية الأكياس', 'type' => 'special'],
+						],
+					],
+					[
+						'label' => 'التقفيلة',
+						'route' => 'admin/lock-admin',
+						'permissions' => [
+							['key' => 'lock_admin.view', 'label' => 'عرض التقفيلة', 'type' => 'view'],
+						],
+					],
+					[
+						'label' => 'تأكيد التقفيلة',
+						'route' => 'admin/lock-track',
+						'permissions' => [
+							['key' => 'lock_track.view', 'label' => 'عرض التأكيد', 'type' => 'view'],
+							['key' => 'lock_track.update', 'label' => 'تعديل سجل', 'type' => 'update'],
+							['key' => 'lock_track.delete', 'label' => 'حذف سجل', 'type' => 'delete'],
+						],
+					],
+					[
+						'label' => 'النماذج',
+						'route' => 'admin/forms',
+						'permissions' => [
+							['key' => 'forms.view', 'label' => 'عرض النماذج', 'type' => 'view'],
+							['key' => 'forms.settlement.view', 'label' => 'نموذج تسوية الغرامة', 'type' => 'special'],
+							['key' => 'forms.replacement.view', 'label' => 'نموذج استبدال الجهاز', 'type' => 'special'],
+						],
+					],
+					[
+						'label' => 'الإعدادات',
+						'route' => 'admin/settings',
+						'permissions' => [
+							['key' => 'settings.view', 'label' => 'عرض الإعدادات', 'type' => 'view'],
+							['key' => 'settings.update', 'label' => 'تعديل الإعدادات', 'type' => 'update'],
+						],
+					],
+				],
+			],
+		];
+	}
+
 	function get_serials_categories() {
 	    if(!in_array($this->session->userdata('user_id'), $this->get_admins())) {
 		    redirect(base_url());
@@ -500,11 +761,10 @@ class Other extends MY_Controller {
 			$this->Variables->setdata('forms_store_name', $this->encode_forms_value($this->input->post('store_name', true)));
 
 			$this->session->set_flashdata('success', 'تم حفظ إعدادات النماذج بنجاح');
-			redirect(base_url().MOD_VALUE.'admin/forms-settings');
+			redirect(base_url().MOD_VALUE.'admin/settings');
 		}
 
-		$this->data['forms_settings'] = $this->get_forms_defaults();
-		$this->load->view('view_admin_forms_settings', $this->data);
+		redirect(base_url().MOD_VALUE.'admin/settings');
 	}
 
 	function forms_data() {
@@ -581,30 +841,36 @@ class Other extends MY_Controller {
 
 
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-			$website_name = $this->input->post('website_name');
-			$website_email = $this->input->post('website_email');
-			$website_domain = $this->input->post('website_domain');
-			$website_backup_email = $this->input->post('website_backup_email');
-			$smtp_mail_encoding = $this->input->post('smtp_mail_encoding');
-			$smtp_port = $this->input->post('smtp_port');
-			$smtp_host = $this->input->post('smtp_host');
-			$smtp_username = $this->input->post('smtp_username');
-			$smtp_password = $this->input->post('smtp_password');
-			$data = [
-				'Website_name' => $website_name,
-				'Website_email' => $website_email,
-				'Website_domain' => $website_domain,
-				'Website_backup_email' => $website_backup_email,
-				'SMTP_mail_encoding' => $smtp_mail_encoding,
-				'SMTP_port' => $smtp_port,
-				'SMTP_host' => $smtp_host,
-				'SMTP_username' => $smtp_username,
-				'SMTP_password' => $smtp_password
-			];
-			$this->Settings->update_fields($data);
+			$settings_section = $this->input->post('settings_section');
+
+			if ($settings_section === 'forms') {
+				$this->Variables->setdata('forms_manager_name', $this->encode_forms_value($this->input->post('manager_name', true)));
+				$this->Variables->setdata('forms_manager_employee_id', $this->encode_forms_value($this->input->post('manager_employee_id', true)));
+				$this->Variables->setdata('forms_stamp', $this->encode_forms_value($this->input->post('stamp', true)));
+				$this->Variables->setdata('forms_store_name', $this->encode_forms_value($this->input->post('store_name', true)));
+				$this->session->set_flashdata('success', 'تم حفظ إعدادات النماذج بنجاح');
+			} else if ($settings_section === 'smtp') {
+				$data = [
+					'SMTP_mail_encoding' => $this->input->post('smtp_mail_encoding'),
+					'SMTP_port' => $this->input->post('smtp_port'),
+					'SMTP_host' => $this->input->post('smtp_host'),
+					'SMTP_username' => $this->input->post('smtp_username'),
+					'SMTP_password' => $this->input->post('smtp_password')
+				];
+				$this->Settings->update_fields($data);
+			} else {
+				$data = [
+					'Website_name' => $this->input->post('website_name'),
+					'Website_email' => $this->input->post('website_email'),
+					'Website_domain' => $this->input->post('website_domain'),
+					'Website_backup_email' => $this->input->post('website_backup_email')
+				];
+				$this->Settings->update_fields($data);
+			}
 		}
 
 		$this->data['settings'] = $this->Settings->get_fields();
+		$this->data['forms_settings'] = $this->get_forms_defaults();
 
 		$this->load->view('view_admin_settings', $this->data);
 	}
