@@ -115,7 +115,40 @@ $shelf_reorder_error = $this->session->flashdata('shelf_reorder_error');
                         </div>
                     </div>
                 </div>
-                <button id = 'serialAdder' type="button">إضافة سيريال</button>
+                <div class = 'serial-entry-actions'>
+                    <button id = 'serialAdder' type="button">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>إضافة سيريال</span>
+                    </button>
+                    <button id = 'shelfSerialScanStart' class = 'scan-serial-button' type="button">
+                        <i class="bi bi-qr-code-scan"></i>
+                        <span>Scan</span>
+                    </button>
+                </div>
+                <div id = 'shelfSerialScannerPanel' class = 'shelf-serial-scanner-panel' hidden>
+                    <div class = 'shelf-serial-scanner-toolbar'>
+                        <span>
+                            <i class="bi bi-camera-video"></i>
+                            مسح السيريال
+                        </span>
+                        <div class = 'shelf-serial-scanner-actions'>
+                            <button id = 'shelfSerialScanQrMode' type = 'button'>
+                                <i class="bi bi-qr-code-scan"></i>
+                                <span>Scan QR Code</span>
+                            </button>
+                            <button id = 'shelfSerialScanStop' type = 'button'>
+                                <i class="bi bi-x-lg"></i>
+                                <span>إغلاق الكاميرا</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id = 'shelfBarcodeTestModes' class = 'shelf-barcode-test-modes' aria-label = 'Barcode test mode'>
+                        <button id = 'shelfBarcodeModeFull' type = 'button' data-mode = 'full'>Full</button>
+                        <button id = 'shelfBarcodeModeWide' type = 'button' data-mode = 'wide'>Wide</button>
+                    </div>
+                    <div id = 'shelfSerialScannerReader' class = 'shelf-serial-scanner-reader'></div>
+                    <div id = 'shelfSerialScannerStatus' class = 'shelf-serial-scanner-status' role = 'status' aria-live = 'polite'></div>
+                </div>
                 <div class = 'serials-total-card' aria-live="polite">
                     <span>المجموع</span>
                     <strong class = 'serials_number'>0</strong>
@@ -146,9 +179,208 @@ $shelf_reorder_error = $this->session->flashdata('shelf_reorder_error');
     margin-bottom: 20px;
 }
 
+.popup-movein-serials .popup-shelves-content {
+    width: min(96vw, 1100px);
+    max-height: min(92vh, 820px);
+    overflow-y: auto;
+}
+
+.popup-movein-serials form {
+    display: flex;
+    flex-direction: column;
+}
+
 .formHeader button {
     margin: 0px !important;
     width: 100% !important;
+}
+
+.serial-entry-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    width: 100%;
+}
+
+.serial-entry-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 52px;
+}
+
+.serial-entry-actions .scan-serial-button {
+    width: auto !important;
+    min-width: 118px;
+    padding-inline: 18px;
+    background: #25364d;
+    box-shadow: 0 10px 22px rgba(37, 54, 77, 0.18);
+}
+
+.serial-entry-actions .scan-serial-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.84;
+}
+
+.serial-entry-actions .scan-serial-button[data-state="running"] {
+    background: #157347;
+}
+
+.shelf-serial-scanner-panel {
+    margin-top: 14px;
+    padding: 12px;
+    border: 1px solid #dbe5f4;
+    border-radius: 12px;
+    background: #f8fbff;
+    box-shadow: 0 10px 24px rgba(102, 126, 234, 0.12);
+}
+
+.shelf-serial-scanner-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+    color: #25364d;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.shelf-serial-scanner-toolbar span,
+.shelf-serial-scanner-toolbar button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.shelf-serial-scanner-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.shelf-serial-scanner-toolbar button {
+    width: auto !important;
+    min-height: 38px;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 9px;
+    background: #eef3ff;
+    color: #25364d;
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: none;
+}
+
+.shelf-barcode-test-modes {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.shelf-serial-scanner-panel[data-mode="qr"] .shelf-barcode-test-modes {
+    display: none;
+}
+
+.shelf-barcode-test-modes button {
+    width: auto !important;
+    min-height: 34px;
+    padding: 7px 12px;
+    border: 1px solid #dbe5f4;
+    border-radius: 8px;
+    background: #fff;
+    color: #25364d;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: none;
+}
+
+.shelf-barcode-test-modes button[data-active="true"] {
+    border-color: #667eea;
+    background: #eef3ff;
+    color: #4b55c7;
+}
+
+.shelf-serial-scanner-reader {
+    position: relative;
+    width: 100%;
+    min-height: 220px;
+    aspect-ratio: 5 / 1.45;
+    overflow: hidden;
+    border: 1px dashed #bdc9e6;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.shelf-serial-scanner-panel[data-mode="barcode"] .shelf-serial-scanner-reader::after {
+    content: "";
+    position: absolute;
+    inset: 18% 3%;
+    border-top: 2px solid rgba(255, 255, 255, 0.88);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.88);
+    box-shadow: 0 0 0 999px rgba(0, 0, 0, 0.12);
+    pointer-events: none;
+}
+
+.shelf-serial-scanner-panel[data-mode="barcode"][data-barcode-test-mode="full"] .shelf-serial-scanner-reader::after {
+    display: none;
+}
+
+.shelf-serial-scanner-panel[data-mode="qr"] .shelf-serial-scanner-reader {
+    width: min(100%, 560px);
+    min-height: 420px;
+    margin-inline: auto;
+    aspect-ratio: 1 / 1;
+}
+
+.shelf-serial-scanner-reader video,
+.shelf-serial-scanner-reader canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.shelf-serial-scanner-reader canvas.drawingBuffer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.shelf-serial-barcode-video {
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    object-fit: cover;
+    background: #000;
+}
+
+.shelf-serial-scanner-status {
+    min-height: 22px;
+    margin-top: 8px;
+    color: #667085;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.shelf-serial-scanner-status[data-type="loading"],
+.shelf-serial-scanner-status[data-type="ready"] {
+    color: #25364d;
+}
+
+.shelf-serial-scanner-status[data-type="success"] {
+    color: #157347;
+}
+
+.shelf-serial-scanner-status[data-type="warning"] {
+    color: #a15c07;
+}
+
+.shelf-serial-scanner-status[data-type="error"] {
+    color: #b42318;
 }
 
 .serials-total-card {
@@ -192,47 +424,150 @@ $shelf_reorder_error = $this->session->flashdata('shelf_reorder_error');
 #serials {
     display: flex;
     flex-direction: column-reverse;
-    gap: 5px;
+    gap: 8px;
     overflow: auto;
     height: fit-content;
-    max-height: 150px;
+    max-height: 180px;
+    padding-inline: 2px;
 }
 
 .serial {
     display: flex;
-    gap: 10px;
+    gap: 0;
     justify-content: space-between;
     align-items: center;
     font-size: 20px;
-    width: fit-content;
+    width: 100%;
+    min-height: 48px;
     background-color: rgb(255, 255, 255);
-    border-radius: 5px;
+    border-radius: 10px;
     padding: 0px;
-    height: 40px;
     overflow: hidden;
     color: black;
-    border: 1px solid lightblue;
+    border: 1px solid #dbe5f4;
     flex-shrink: 0;
+    box-shadow: 0 8px 18px rgba(102, 126, 234, 0.08);
+}
+
+.serial-poster-input {
+    width: min(42%, 220px);
+    min-width: 132px;
+    height: 100%;
+    padding: 8px 10px;
+    border: 0;
+    border-inline-start: 1px solid #dbe5f4;
+    outline: none;
+    color: #25364d;
+    font-size: 16px;
+    font-weight: 700;
+    background: #f8fbff;
+}
+
+.serial-poster-input:focus {
+    background: #fff;
+    box-shadow: inset 0 0 0 2px rgba(102, 126, 234, 0.22);
 }
 
 .serial span {
+    flex: 1 1 auto;
+    min-width: 0;
     line-height: normal;
     padding: 10px;
-    font-weight: normal;
+    font-weight: 700;
     font-family: Arial, Helvetica, sans-serif;
     border: none;
     outline: none;
+    overflow-wrap: anywhere;
+    color: #25364d;
 }
 
 .serial i {
     font-size: 20px;
-    padding: 10px;
+    width: 44px;
+    align-self: stretch;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    color: red;
+    color: #b42318;
+    border-inline-start: 1px solid #f1c9c5;
+    background: #fff5f4;
 }
 
 .serial i:hover {
     color: rgb(107, 35, 35);
+}
+
+@media (max-width: 640px) {
+    .serial-entry-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .serial-entry-actions .scan-serial-button {
+        width: 100% !important;
+    }
+
+    .shelf-serial-scanner-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .shelf-serial-scanner-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .shelf-serial-scanner-toolbar button {
+        width: 100% !important;
+        justify-content: center;
+    }
+
+    .shelf-barcode-test-modes {
+        width: 100%;
+    }
+
+    .shelf-barcode-test-modes button {
+        flex: 1 1 0;
+    }
+
+    .shelf-serial-scanner-reader {
+        min-height: 230px;
+        aspect-ratio: 2.6 / 1;
+    }
+
+    .shelf-serial-scanner-panel[data-mode="qr"] .shelf-serial-scanner-reader {
+        width: 100%;
+        min-height: 320px;
+        aspect-ratio: 1 / 1;
+    }
+
+    #serials {
+        max-height: 220px;
+    }
+
+    .serial {
+        align-items: stretch;
+        flex-wrap: wrap;
+    }
+
+    .serial span {
+        flex-basis: calc(100% - 44px);
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    .serial-poster-input {
+        order: 3;
+        width: 100%;
+        min-height: 44px;
+        border-inline-start: 0;
+        border-top: 1px solid #dbe5f4;
+    }
+
+    .serial i {
+        min-height: 44px;
+    }
 }
 
 </style>
@@ -256,6 +591,7 @@ $shelf_reorder_error = $this->session->flashdata('shelf_reorder_error');
 <script src="https://code.jquery.com/jquery-3.6.0.js" crossorigin="anonymous"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
 
 <script src="<?php echo base_url(); ?>public/js/script.js?a=<?php $date=date_create();echo date_timestamp_get($date);?>"></script>
 <script src="<?php echo base_url(); ?>public/js/shelf.js?a=<?php $date=date_create();echo date_timestamp_get($date);?>"></script>

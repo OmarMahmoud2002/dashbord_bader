@@ -74,7 +74,7 @@ class Model_store_items extends CI_Model
             $this->db->where('i.item_category', $searchCategory);
         }
         
-        $this->db->group_by(array('i.item_description', 'i.item_category', 'i.item_code'));
+        $this->db->group_by(array('i.item_description', 'i.item_category', 'i.item_code', 'i.serial_control', 'i.quantity_total'));
         $this->db->order_by($sortColumn, $sortOrder);
         $this->db->limit($limit, $start);
         
@@ -112,7 +112,11 @@ class Model_store_items extends CI_Model
             GROUP BY
                 i.item_description,
                 i.item_category,
-                i.item_code
+                i.item_code,
+                i.serial_control,
+                i.quantity_total,
+                i.low_quantity,
+                i.updated_at
 
             HAVING total_quantity <= i.low_quantity
 
@@ -273,8 +277,11 @@ class Model_store_items extends CI_Model
         $this->db->join('tbl_user_custody c', 'i.serial_number = c.serial_number OR (i.serial_control = "no" AND i.item_code = c.item_code)', 'left');
         $this->db->join('tbl_requests r', 'i.serial_number = r.serial_number OR (i.serial_control = "no" AND i.item_code = r.item_code)', 'left');
 
+        $this->db->group_by(array('i.serial_control', 'i.quantity_total'));
+
         $query = $this->db->get();
-        return array_column($query->result_array(), 'total_quantity')[0];
+        $result = array_column($query->result_array(), 'total_quantity');
+        return !empty($result) ? $result[0] : 0;
     }
 
     function get_items_in_shelf($shelf_id) {

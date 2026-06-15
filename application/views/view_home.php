@@ -1,66 +1,81 @@
 <?php $this->view('view_header'); ?>
-<style>
-    
-  .input-group {
-    width: 100%; /* تأكد من أن الحاوية تأخذ عرض 100% */
-    margin-bottom: 15px; /* لإضافة مسافة بين الحقول */
-  }
-
-  .input-group label {
-    display: block; /* لعرض التسمية في سطر منفصل */
-    margin-bottom: 5px; /* مسافة بين التسمية والمدخل */
-  }
-
-  .input-group input {
-    width: 100%; /* جعل المدخلات تأخذ عرض 100% */
-    padding: 10px; /* إضافة حشوة للمدخلات */
-    box-sizing: border-box; /* للتأكد من أن الحشوة تؤخذ في الاعتبار */
-  }
-</style>
 <?php
 $CI =& get_instance();
 $CI->load->model('Model_user');
 ?>
 
-<img class= 'background' src="<?=base_url()?>public/img/backgrounds/background.png">
-<style>
-    .background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: -1;
-    }
-</style>
+<main class="login-page" dir="rtl">
+  <img class="login-bg" src="<?=base_url()?>public/img/backgrounds/store-gate-login-bg.png" alt="">
+  <div class="login-veil"></div>
+  <span class="login-orb login-orb-one"></span>
+  <span class="login-orb login-orb-two"></span>
 
-<!-- HTML -->
-  <div class="login">
+  <section class="login">
     <div class="login-widget">
-      <h2>تسجيل الدخول</h2>
-      <?php echo form_open(base_url().MOD_VALUE.'user/login',array('class' => '')); ?>
-        <div  class="input-group">
-          <label htmlFor="username">اسم المستحدم</label>
-          <input  name="user_name"
+      <div class="login-card-sheen"></div>
+      <div class="login-brand">
+        <img src="<?=base_url()?>logo.png" alt="Store Gate">
+      </div>
+      <h1>مرحبًا بك مجددًا</h1>
+      <p>سجل الدخول إلى حسابك</p>
+
+      <?php echo form_open(base_url().MOD_VALUE.'user/login',array('class' => 'login-form')); ?>
+        <div class="login-field">
+          <label for="user_name">اسم المستخدم أو البريد الإلكتروني</label>
+          <span class="field-icon"><i class="fa-regular fa-user"></i></span>
+          <input
+            name="user_name"
             type="text"
-            placeholder="اسم المستحدم"
+            placeholder="اسم المستخدم أو البريد الإلكتروني"
             id="user_name"
+            autocomplete="username"
           />
         </div>
-        <div class="input-group">
-          <label htmlFor="password">كلمة المرور</label>
+        <div class="login-field">
+          <label for="user_password">كلمة المرور</label>
+          <span class="field-icon"><i class="fa-solid fa-lock"></i></span>
           <input
             type="password"
             placeholder="كلمة المرور"
             id="user_password"
             name="user_password"
+            autocomplete="current-password"
           />
+          <button class="password-toggle" type="button" aria-label="إظهار كلمة المرور" data-password-toggle>
+            <i class="fa-regular fa-eye-slash"></i>
+          </button>
         </div>
-     <button type="submit" class="btn btn-primary btn-success" name="form_login"> دخول</button>
-     <?php echo form_close(); ?>
+        <label class="remember-control">
+          <input type="checkbox" name="remember_me" value="1" checked>
+          <span class="remember-check" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+          <span>تذكرني</span>
+        </label>
+        <button type="submit" class="login-submit" name="form_login">
+          <span>تسجيل الدخول</span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </button>
+      <?php echo form_close(); ?>
     </div>
-  </div>
+  </section>
+</main>
+
+<script>
+  (function () {
+    var toggle = document.querySelector('[data-password-toggle]');
+    var password = document.getElementById('user_password');
+
+    if (!toggle || !password) {
+      return;
+    }
+
+    toggle.addEventListener('click', function () {
+      var isHidden = password.type === 'password';
+      password.type = isHidden ? 'text' : 'password';
+      toggle.setAttribute('aria-label', isHidden ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور');
+      toggle.innerHTML = isHidden ? '<i class="fa-regular fa-eye"></i>' : '<i class="fa-regular fa-eye-slash"></i>';
+    });
+  })();
+</script>
 
 
 <?php $this->view('view_footer'); ?>
