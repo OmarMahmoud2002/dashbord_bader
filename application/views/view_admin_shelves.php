@@ -449,6 +449,53 @@ $shelf_reorder_error = $this->session->flashdata('shelf_reorder_error');
     box-shadow: 0 8px 18px rgba(102, 126, 234, 0.08);
 }
 
+.serial-check-pending {
+    border-color: #dbe5f4;
+}
+
+.serial-check-valid {
+    border-color: #9ad5b1;
+    background: #fbfffd;
+}
+
+.serial-check-invalid,
+.serial-check-error {
+    border-color: #f1b8b3;
+    background: #fff8f7;
+}
+
+.serial-status-badge {
+    width: 44px;
+    align-self: stretch;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 44px;
+    border-inline-start: 1px solid #dbe5f4;
+    font-style: normal;
+    font-size: 22px;
+    font-weight: 900;
+    color: #667085;
+    background: #f8fbff;
+}
+
+.serial-status-badge[data-state="valid"] {
+    color: #157347;
+    background: #ecfdf3;
+    border-inline-start-color: #b7e4c7;
+}
+
+.serial-status-badge[data-state="invalid"],
+.serial-status-badge[data-state="error"] {
+    color: #b42318;
+    background: #fff1f0;
+    border-inline-start-color: #f1b8b3;
+}
+
+.serial-status-badge[data-state="pending"] {
+    color: #4b55c7;
+}
+
 .serial-poster-input {
     width: min(42%, 220px);
     min-width: 132px;
@@ -466,6 +513,10 @@ $shelf_reorder_error = $this->session->flashdata('shelf_reorder_error');
 .serial-poster-input:focus {
     background: #fff;
     box-shadow: inset 0 0 0 2px rgba(102, 126, 234, 0.22);
+}
+
+.serial-poster-input:disabled {
+    opacity: 0.72;
 }
 
 .serial span {
@@ -547,26 +598,50 @@ $shelf_reorder_error = $this->session->flashdata('shelf_reorder_error');
 
     .serial {
         align-items: stretch;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        min-height: 44px;
     }
 
     .serial span {
-        flex-basis: calc(100% - 44px);
+        flex: 1 1 auto;
+        flex-basis: auto;
+        min-width: 0;
         min-height: 44px;
         display: flex;
         align-items: center;
+        padding: 8px;
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .serial-poster-input {
-        order: 3;
-        width: 100%;
+        order: initial;
+        flex: 0 0 clamp(76px, 29%, 112px);
+        width: auto;
+        min-width: 0;
         min-height: 44px;
-        border-inline-start: 0;
-        border-top: 1px solid #dbe5f4;
+        height: auto;
+        padding: 8px 6px;
+        border-inline-start: 1px solid #dbe5f4;
+        border-top: 0;
+        font-size: 13px;
+        text-align: center;
+    }
+
+    .serial-status-badge {
+        width: 38px;
+        flex-basis: 38px;
+        min-height: 44px;
+        font-size: 18px;
     }
 
     .serial i {
+        width: 38px;
+        flex: 0 0 38px;
         min-height: 44px;
+        font-size: 16px;
     }
 }
 
@@ -593,6 +668,9 @@ $shelf_reorder_error = $this->session->flashdata('shelf_reorder_error');
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
 
+<script>
+    window.shelfSerialCheckUrl = "<?= base_url() . MOD_VALUE . 'admin/shelves/check_serial' ?>";
+</script>
 <script src="<?php echo base_url(); ?>public/js/script.js?a=<?php $date=date_create();echo date_timestamp_get($date);?>"></script>
 <script src="<?php echo base_url(); ?>public/js/shelf.js?a=<?php $date=date_create();echo date_timestamp_get($date);?>"></script>
 

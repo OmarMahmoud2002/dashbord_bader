@@ -35,6 +35,7 @@ const nativeBarcodeScanIntervalMs = 220;
 const barcodeCandidateWindowMs = 2200;
 const barcodeConfirmationsRequired = 2;
 const shelfBarcodeScanDebug = true;
+const shelfSerialCheckCache = Object.create(null);
 
 $(".app-content-headerButton:not(.orderShelf)").click(() => {
   $(".popup-add-shelf").fadeIn(200)
@@ -53,6 +54,159 @@ function showShelfToast(type, message) {
     if (type === 'warning' || type === 'error') {
         alert(message)
     }
+}
+
+function getShelfSerialCheckUrl() {
+    return window.shelfSerialCheckUrl || '/admin/shelves/check_serial'
+}
+
+function getSerialStatusText(state) {
+    if (state === 'valid') {
+        return 'السيريال موجود'
+    }
+
+    if (state === 'invalid') {
+        return 'السيريال غير موجود'
+    }
+
+    if (state === 'error') {
+        return 'تعذر التحقق'
+    }
+
+    return 'جاري التحقق'
+}
+
+function setSerialCheckState(serialItem, state, message) {
+    if (!serialItem) {
+        return
+    }
+
+    const status = state || 'pending'
+    const statusText = message || getSerialStatusText(status)
+    const statusBadge = serialItem.querySelector('.serial-status-badge')
+    const serialInput = serialItem.querySelector('input[name="serials[]"]')
+    const posterInput = serialItem.querySelector('input[name="posters[]"]')
+    const canSubmit = status === 'valid'
+
+    serialItem.dataset.checkStatus = status
+    serialItem.classList.remove('serial-check-pending', 'serial-check-valid', 'serial-check-invalid', 'serial-check-error')
+    serialItem.classList.add('serial-check-' + status)
+
+    if (statusBadge) {
+        statusBadge.dataset.state = status
+        statusBadge.textContent = status === 'valid' ? '✓' : (status === 'pending' ? '…' : '×')
+        statusBadge.setAttribute('title', statusText)
+        statusBadge.setAttribute('aria-label', statusText)
+    }
+
+    if (serialInput) {
+        serialInput.disabled = !canSubmit
+    }
+
+    if (posterInput) {
+        posterInput.disabled = !canSubmit
+    }
+}
+
+function checkSerialExists(serial) {
+    if (Object.prototype.hasOwnProperty.call(shelfSerialCheckCache, serial)) {
+        return Promise.resolve(shelfSerialCheckCache[serial])
+    }
+
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: getShelfSerialCheckUrl(),
+            type: 'POST',
+            dataType: 'json',
+            data: { serial: serial }
+        }).done((response) => {
+            const exists = !!(response && response.exists)
+            shelfSerialCheckCache[serial] = exists
+            resolve(exists)
+        }).fail((xhr) => {
+            reject(xhr)
+        })
+    })
+}
+
+function checkSerialItem(serialItem) {
+    if (!serialItem) {
+        return Promise.resolve(false)
+    }
+
+    const serial = serialItem.dataset.serial
+    if (!serial) {
+        setSerialCheckState(serialItem, 'invalid', 'السيريال فارغ')
+        return Promise.resolve(false)
+    }
+
+    setSerialCheckState(serialItem, 'pending')
+
+    return checkSerialExists(serial).then((exists) => {
+        if (!document.body.contains(serialItem)) {
+            return exists
+        }
+
+        setSerialCheckState(
+            serialItem,
+            exists ? 'valid' : 'invalid',
+            exists ? 'السيريال موجود' : 'السيريال غير موجود'
+        )
+
+        return exists
+    }).catch(() => {
+        if (document.body.contains(serialItem)) {
+            setSerialCheckState(serialItem, 'error', 'تعذر التحقق من السيريال')
+        }
+
+        return false
+    })
+}
+
+function getShelfSerialRows() {
+    return Array.from(document.querySelectorAll('#serials .serial'))
+}
+
+function getShelfSerialStatusCounts() {
+    return getShelfSerialRows().reduce((counts, row) => {
+        const status = row.dataset.checkStatus || 'pending'
+        counts.total += 1
+        counts[status] = (counts[status] || 0) + 1
+        return counts
+    }, { total: 0, valid: 0, invalid: 0, pending: 0, error: 0 })
+}
+
+function syncSerializableSerialInputs() {
+    getShelfSerialRows().forEach((row) => {
+        const canSubmit = row.dataset.checkStatus === 'valid'
+        const serialInput = row.querySelector('input[name="serials[]"]')
+        const posterInput = row.querySelector('input[name="posters[]"]')
+
+        if (serialInput) {
+            serialInput.disabled = !canSubmit
+        }
+
+        if (posterInput) {
+            posterInput.disabled = !canSubmit
+        }
+    })
+}
+
+function verifyPendingShelfSerials() {
+    const pendingRows = getShelfSerialRows().filter((row) => {
+        const status = row.dataset.checkStatus
+        return status === 'pending' || status === 'error' || !status
+    })
+
+    if (!pendingRows.length) {
+        syncSerializableSerialInputs()
+        return Promise.resolve(getShelfSerialStatusCounts())
+    }
+
+    return Promise.all(pendingRows.map((row) => checkSerialItem(row))).then(() => {
+        syncSerializableSerialInputs()
+        return getShelfSerialStatusCounts()
+    })
 }
 
 function getExistingSerial(serial) {
@@ -166,6 +320,11 @@ function add_serial(serialValue, posterValue, source) {
     posterInput.placeholder = 'رقم الملصق'
     posterInput.setAttribute('aria-label', 'رقم الملصق')
 
+    const statusBadge = document.createElement('em')
+    statusBadge.className = 'serial-status-badge'
+    statusBadge.setAttribute('role', 'img')
+    statusBadge.setAttribute('aria-label', 'جاري التحقق')
+
     const deleteButton = document.createElement('i')
     deleteButton.className = 'fa fa-trash delete'
     deleteButton.setAttribute('role', 'button')
@@ -182,8 +341,11 @@ function add_serial(serialValue, posterValue, source) {
     serialItem.appendChild(serialText)
     serialItem.appendChild(serialInput)
     serialItem.appendChild(posterInput)
+    serialItem.appendChild(statusBadge)
     serialItem.appendChild(deleteButton)
+    setSerialCheckState(serialItem, 'pending')
     element.appendChild(serialItem)
+    checkSerialItem(serialItem)
 
     updateSerialsCount(1)
 
@@ -1525,29 +1687,51 @@ window.addEventListener('pagehide', () => {
     stopShelfSerialScanner()
 })
 
-function send_change_request() {
-    if (typeof window.adminUiConfirm === 'function') {
-        window.adminUiConfirm({
-            title: 'تأكيد الحفظ',
-            message: 'هل تريد حفظ البيانات؟',
-            confirmText: 'حفظ',
-            cancelText: 'إلغاء',
-            icon: 'bi-check2-circle'
-        }).then((confirmed) => {
-            if (confirmed) {
-                stopShelfSerialScanner().finally(() => {
-                    $('.popup-movein-serials form').submit()
-                })
-            }
-        })
-        return
+function submitShelfReorderForm() {
+    syncSerializableSerialInputs()
+    stopShelfSerialScanner().finally(() => {
+        $('.popup-movein-serials form').submit()
+    })
+}
+
+function getShelfSaveConfirmationMessage(counts) {
+    const skipped = counts.total - counts.valid
+
+    if (skipped > 0) {
+        return 'هيتم حفظ ' + counts.valid + ' سيريال موجود فقط، وتجاهل ' + skipped + ' سيريال غير موجود.'
     }
 
-    if (confirm('هل تريد حفظ البيانات؟')) {
-        stopShelfSerialScanner().finally(() => {
-            $('.popup-movein-serials form').submit()
-        })
-    }
+    return 'هيتم حفظ ' + counts.valid + ' سيريال موجود.'
+}
+
+function send_change_request() {
+    verifyPendingShelfSerials().then((counts) => {
+        if (counts.valid < 1) {
+            showShelfToast('warning', 'لا يوجد سيريالات موجودة للحفظ')
+            return
+        }
+
+        const message = getShelfSaveConfirmationMessage(counts)
+
+        if (typeof window.adminUiConfirm === 'function') {
+            window.adminUiConfirm({
+                title: 'تأكيد الحفظ',
+                message: message,
+                confirmText: 'حفظ الموجود فقط',
+                cancelText: 'إلغاء',
+                icon: 'bi-check2-circle'
+            }).then((confirmed) => {
+                if (confirmed) {
+                    submitShelfReorderForm()
+                }
+            })
+            return
+        }
+
+        if (confirm(message)) {
+            submitShelfReorderForm()
+        }
+    })
 }
 
 $('.del-btn').click((event) => {

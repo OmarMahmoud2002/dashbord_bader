@@ -48,6 +48,14 @@ class Shelves extends MY_Controller {
                 $posters = $this->input->post('posters');
                 $errors = '';
 
+                if (!is_array($serials)) {
+                    $serials = array();
+                }
+
+                if (!is_array($posters)) {
+                    $posters = array();
+                }
+
                 foreach ($serials as $serial_number) {
                     if ($serial_number == '') {
                         $errors .= 'السيريال فارغ' . '<br><br>';
@@ -75,6 +83,43 @@ class Shelves extends MY_Controller {
 
 		$this->data['shelves'] = $this->Shelves->get_shelves();
 		$this->load->view('view_admin_shelves', $this->data);
+    }
+
+    public function check_serial() {
+        if(!in_array($this->session->userdata('user_id'), $this->get_admins())) {
+            $this->output
+                ->set_status_header(403)
+                ->set_content_type('application/json')
+                ->set_output(json_encode(array(
+                    'status' => 'error',
+                    'exists' => false,
+                    'description' => 'غير مصرح'
+                )));
+            return;
+        }
+
+        $serial_number = trim((string) $this->input->post('serial'));
+
+        if ($serial_number === '') {
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode(array(
+                    'status' => 'error',
+                    'exists' => false,
+                    'description' => 'السيريال فارغ'
+                )));
+            return;
+        }
+
+        $item = $this->Store->get_store_item(array('serial_number' => $serial_number));
+
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array(
+                'status' => 'success',
+                'exists' => !empty($item),
+                'serial' => $serial_number
+            )));
     }
 
     public function delete_shelf() {
