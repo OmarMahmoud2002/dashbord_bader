@@ -177,11 +177,23 @@ flex: 1;
 }
 
 .input-cell {
-    background-color: white;
+    /* START settlement writable field color additions */
+    background-color: #ff000038;
+    /* END settlement writable field color additions */
     width: 30%;
     padding: 0;
     vertical-align: middle;
 }
+
+/* START settlement writable field color additions */
+.input-cell.form-default-cell {
+    background-color: white;
+}
+
+.input-cell.has-written-value {
+    background-color: white;
+}
+/* END settlement writable field color additions */
 
 .form-input,
 .form-textarea {
@@ -466,6 +478,20 @@ span.flatpickr-weekday {
         background-color: #d3d3d3 !important;
         word-spacing: 3px !important;
     }
+
+    /* START settlement writable field color additions */
+    .input-cell {
+        background-color: #ff000038 !important;
+    }
+
+    .input-cell.form-default-cell {
+        background-color: white !important;
+    }
+
+    .input-cell.has-written-value {
+        background-color: white !important;
+    }
+    /* END settlement writable field color additions */
 
     .signature-table td {
         height: 39px !important;

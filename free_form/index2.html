@@ -36,12 +36,14 @@
                     <td class="label-cell">رقم حساب الفوترة</td>
                     <td class="input-cell"><input type="text" class="form-input"></td>
                 </tr>
+                <!-- START settlement form defaults additions -->
                 <tr>
                     <td class="label-cell">باقة الخدمة</td>
-                    <td class="input-cell"><input type="text" class="form-input"></td>
+                    <td class="input-cell form-default-cell"><input type="text" class="form-input" data-form-service-package></td>
                     <td class="label-cell">مدة العقد</td>
-                    <td class="input-cell"><input type="text" class="form-input"></td>
+                    <td class="input-cell form-default-cell"><input type="text" class="form-input" data-form-contract-duration></td>
                 </tr>
+                <!-- END settlement form defaults additions -->
                 <tr>
                     <td class="label-cell">تاريخ تأسيس الخدمة</td>
                     <td class="input-cell"><input type="text" class="form-input date-picker" ></td>
@@ -95,33 +97,35 @@
             <table class="signature-table" border-collapse: collapse;>
                 <tr>
                     <td class="label-cell">الموظف</td>
-                    <td class="input-cell"><input type="text" class="form-input"></td>
+                    <td class="input-cell"><input type="text" class="form-input" data-form-employee-name></td>
                     <td class="label-cell">الرقم الوظيفي</td>
-                    <td class="input-cell"><input type="text" class="form-input"></td>
+                    <td class="input-cell"><input type="text" class="form-input" data-form-employee-id></td>
                 </tr>
+                <!-- START settlement employee signature sync additions -->
                 <tr>
                     <td class="label-cell">التوقيع</td>
-                    <td class="input-cell"><input type="text" class="form-input"></td>
+                    <td class="input-cell"><input type="text" class="form-input" data-form-employee-signature></td>
                     <td class="label-cell">التاريخ</td>
                     <td class="input-cell"><input type="text" class="form-input date-picker" data-sync-from-cancel-date></td>
                 </tr>
+                <!-- END settlement employee signature sync additions -->
                 <tr>
                     <td class="label-cell">مدير المكتب</td>
-                    <td class="input-cell"><input type="text" class="form-input"></td>
+                    <td class="input-cell form-default-cell"><input type="text" class="form-input" data-form-manager-name></td>
                     <td class="label-cell">الرقم الوظيفي</td>
-                    <td class="input-cell"><input type="text" class="form-input"></td>
+                    <td class="input-cell form-default-cell"><input type="text" class="form-input" data-form-manager-id></td>
                 </tr>
                 <tr>
                     <td class="label-cell">التوقيع</td>
-                    <td class="input-cell"><input type="text" class="form-input"></td>
+                    <td class="input-cell form-default-cell"><input type="text" class="form-input" data-form-manager-signature></td>
                     <td class="label-cell">التاريخ</td>
                     <td class="input-cell"><input type="text" class="form-input date-picker" data-sync-from-cancel-date></td>
                 </tr>
                 <tr>
                     <td class="label-cell">إسم المكتب</td>
-                    <td class="input-cell"><input type="text" class="form-input"></td>
+                    <td class="input-cell form-default-cell"><input type="text" class="form-input" data-form-store-name></td>
                     <td class="label-cell">الختم</td>
-                    <td class="input-cell"><input type="text" class="form-input"></td>
+                    <td class="input-cell form-default-cell"><input type="text" class="form-input" data-form-stamp></td>
                 </tr>
             </table>
             </section>

@@ -759,6 +759,10 @@ class Other extends MY_Controller {
 			$this->Variables->setdata('forms_manager_employee_id', $this->encode_forms_value($this->input->post('manager_employee_id', true)));
 			$this->Variables->setdata('forms_stamp', $this->encode_forms_value($this->input->post('stamp', true)));
 			$this->Variables->setdata('forms_store_name', $this->encode_forms_value($this->input->post('store_name', true)));
+			// START settlement form defaults additions
+			$this->Variables->setdata('forms_settlement_service_package', $this->encode_forms_value($this->input->post('settlement_service_package', true)));
+			$this->Variables->setdata('forms_settlement_contract_duration', $this->encode_forms_value($this->input->post('settlement_contract_duration', true)));
+			// END settlement form defaults additions
 
 			$this->session->set_flashdata('success', 'تم حفظ إعدادات النماذج بنجاح');
 			redirect(base_url().MOD_VALUE.'admin/settings');
@@ -800,7 +804,9 @@ class Other extends MY_Controller {
 	}
 
 	private function get_forms_defaults() {
-		$keys = ['forms_manager_name', 'forms_manager_employee_id', 'forms_stamp', 'forms_store_name'];
+		// START settlement form defaults additions
+		$keys = ['forms_manager_name', 'forms_manager_employee_id', 'forms_stamp', 'forms_store_name', 'forms_settlement_service_package', 'forms_settlement_contract_duration'];
+		// END settlement form defaults additions
 		$values = $this->Variables->getmany($keys);
 
 		return [
@@ -808,6 +814,10 @@ class Other extends MY_Controller {
 			'manager_employee_id' => isset($values['forms_manager_employee_id']) ? $this->decode_forms_value($values['forms_manager_employee_id']) : '',
 			'stamp' => isset($values['forms_stamp']) ? $this->decode_forms_value($values['forms_stamp']) : '',
 			'store_name' => isset($values['forms_store_name']) ? $this->decode_forms_value($values['forms_store_name']) : '',
+			// START settlement form defaults additions
+			'settlement_service_package' => isset($values['forms_settlement_service_package']) ? $this->decode_forms_value($values['forms_settlement_service_package']) : '',
+			'settlement_contract_duration' => isset($values['forms_settlement_contract_duration']) ? $this->decode_forms_value($values['forms_settlement_contract_duration']) : '',
+			// END settlement form defaults additions
 		];
 	}
 
@@ -848,6 +858,10 @@ class Other extends MY_Controller {
 				$this->Variables->setdata('forms_manager_employee_id', $this->encode_forms_value($this->input->post('manager_employee_id', true)));
 				$this->Variables->setdata('forms_stamp', $this->encode_forms_value($this->input->post('stamp', true)));
 				$this->Variables->setdata('forms_store_name', $this->encode_forms_value($this->input->post('store_name', true)));
+				// START settlement form defaults additions
+				$this->Variables->setdata('forms_settlement_service_package', $this->encode_forms_value($this->input->post('settlement_service_package', true)));
+				$this->Variables->setdata('forms_settlement_contract_duration', $this->encode_forms_value($this->input->post('settlement_contract_duration', true)));
+				// END settlement form defaults additions
 				$this->session->set_flashdata('success', 'تم حفظ إعدادات النماذج بنجاح');
 			} else if ($settings_section === 'smtp') {
 				$data = [

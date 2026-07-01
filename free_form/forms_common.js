@@ -130,7 +130,7 @@
         dropdown.style.width = `${rect.width}px`;
     }
 
-    function attachEmployeePicker(nameInput, idInput, employees) {
+    function attachEmployeePicker(nameInput, idInput, employees, signatureInput) {
         if (!nameInput || !idInput) {
             return;
         }
@@ -140,9 +140,34 @@
         nameInput.removeAttribute('list');
         nameInput.setAttribute('autocomplete', 'off');
 
+        // START settlement employee signature sync additions
+        const syncEmployeeSignature = (employeeName, forceSync) => {
+            if (!signatureInput) {
+                return;
+            }
+
+            if (forceSync || !signatureInput.value.trim() || signatureInput.dataset.syncedFromEmployeeName === '1') {
+                signatureInput.value = employeeName || '';
+                signatureInput.dataset.syncedFromEmployeeName = '1';
+            }
+        };
+
+        if (signatureInput) {
+            signatureInput.addEventListener('input', () => {
+                signatureInput.dataset.syncedFromEmployeeName = signatureInput.value === nameInput.value ? '1' : '0';
+            });
+        }
+        // END settlement employee signature sync additions
+
         const selectEmployee = (employee) => {
             nameInput.value = employee.name || '';
             idInput.value = employee.employee_number || '';
+            // START settlement employee signature sync additions
+            syncEmployeeSignature(employee.name || '', true);
+            // END settlement employee signature sync additions
+            // START settlement empty field color additions
+            document.dispatchEvent(new CustomEvent('forms:writable-fields-updated'));
+            // END settlement empty field color additions
             dropdown.classList.remove('is-open');
         };
 
@@ -193,6 +218,12 @@
             const selectedEmployee = employees.find((employee) => employee.name === selectedName);
             if (selectedEmployee) {
                 idInput.value = selectedEmployee.employee_number || '';
+                // START settlement employee signature sync additions
+                syncEmployeeSignature(selectedEmployee.name || '');
+                // END settlement employee signature sync additions
+                // START settlement empty field color additions
+                document.dispatchEvent(new CustomEvent('forms:writable-fields-updated'));
+                // END settlement empty field color additions
             }
         };
 
@@ -222,13 +253,15 @@
         attachEmployeePicker(
             document.querySelector('input[name="employeeName"]'),
             document.querySelector('input[name="employeeId"]'),
-            employees
+            employees,
+            null
         );
 
         attachEmployeePicker(
             document.querySelector('[data-form-employee-name]') || signatureInputs[0],
             document.querySelector('[data-form-employee-id]') || signatureInputs[1],
-            employees
+            employees,
+            document.querySelector('[data-form-employee-signature]') || signatureInputs[2]
         );
     }
 
@@ -238,6 +271,10 @@
         setIfAvailable(document.querySelector('input[name="storeManagerId"]'), settings.manager_employee_id);
         setIfAvailable(document.querySelector('input[name="storeStamp"]'), settings.stamp);
         setIfAvailable(document.querySelector('input[name="storeName"]'), settings.store_name);
+        // START settlement form defaults additions
+        setIfAvailable(document.querySelector('[data-form-service-package]'), settings.settlement_service_package);
+        setIfAvailable(document.querySelector('[data-form-contract-duration]'), settings.settlement_contract_duration);
+        // END settlement form defaults additions
 
         const signatureInputs = Array.from(document.querySelectorAll('.signature-table input[type="text"]'));
         setIfAvailable(document.querySelector('[data-form-manager-name]') || signatureInputs[4], settings.manager_name);

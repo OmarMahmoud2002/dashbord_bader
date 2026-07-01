@@ -3,6 +3,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const cancelDateInput = document.getElementById('serviceCancelDate');
     const syncedDateInputs = document.querySelectorAll('[data-sync-from-cancel-date]');
     let syncingCancelDate = false;
+
+    // START settlement empty field color additions
+    const updateWritableFieldColor = (field) => {
+        const cell = field.closest('.input-cell');
+        if (!cell || cell.classList.contains('form-default-cell')) {
+            return;
+        }
+
+        cell.classList.toggle('has-written-value', field.value.trim() !== '');
+    };
+
+    const updateAllWritableFieldColors = () => {
+        document.querySelectorAll('.input-cell:not(.form-default-cell) input[type="text"], .input-cell:not(.form-default-cell) textarea').forEach(updateWritableFieldColor);
+    };
+
+    document.querySelectorAll('.input-cell:not(.form-default-cell) input[type="text"], .input-cell:not(.form-default-cell) textarea').forEach((field) => {
+        ['input', 'change'].forEach((eventName) => {
+            field.addEventListener(eventName, () => updateWritableFieldColor(field));
+        });
+        updateWritableFieldColor(field);
+    });
+
+    document.addEventListener('forms:writable-fields-updated', updateAllWritableFieldColors);
+    // END settlement empty field color additions
     
     // تفعيل flatpickr لحقول التاريخ
     if (typeof flatpickr !== 'undefined') {
@@ -22,10 +46,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const setDateInputValue = (input, value) => {
         if (input._flatpickr) {
             input._flatpickr.setDate(value, false, "d/m/Y");
+            // START settlement empty field color additions
+            updateWritableFieldColor(input);
+            // END settlement empty field color additions
             return;
         }
 
         input.value = value;
+        // START settlement empty field color additions
+        updateWritableFieldColor(input);
+        // END settlement empty field color additions
     };
 
     const syncCancelDateToSignatureDates = () => {
@@ -80,14 +110,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // الحصول على اسم العميل للملف
+            // START settlement PDF filename additions
             const customerNameInput = document.querySelector('.form-table input[type="text"]');
-            const customerName = customerNameInput ? customerNameInput.value.trim() : 'عميل';
-            const sanitizedName = customerName.replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, '_');
-            
+            const customerName = customerNameInput && customerNameInput.value.trim() ? customerNameInput.value.trim() : 'عميل';
+            const sanitizedName = customerName.replace(/[<>:"/\\|?*]/g, '_').replace(/\s+/g, ' ').trim();
+            const printTitle = `نموذج تسوية الغرامة_${sanitizedName}`;
+            // END settlement PDF filename additions
+
             // تعيين عنوان المستند لاسم ملف PDF
             const originalTitle = document.title;
-            document.title = `نموذج_تسوية_غرامة_${sanitizedName}` || 'نموذج_تسوية_غرامة';
+            const originalTopTitle = window.top && window.top.document ? window.top.document.title : null;
+            // START settlement PDF filename additions
+            document.title = printTitle;
+            if (window.top && window.top.document) {
+                window.top.document.title = printTitle;
+            }
+            // END settlement PDF filename additions
             
             // استخدام وظيفة الطباعة إلى PDF في المتصفح
             window.print();
@@ -95,6 +133,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // استعادة العنوان الأصلي
             setTimeout(() => {
                 document.title = originalTitle;
+                if (window.top && window.top.document && originalTopTitle !== null) {
+                    window.top.document.title = originalTopTitle;
+                }
             }, 1000);
         });
     }

@@ -81,6 +81,16 @@
             <label for="store_name">اسم المعرض</label>
             <input id="store_name" type="text" value="<?php echo safe_data($forms_settings['store_name']); ?>" name="store_name">
             </div>
+            <!-- START settlement form defaults additions -->
+            <div class="inpt">
+            <label for="settlement_service_package">باقة الخدمة - نموذج تسوية الغرامة</label>
+            <input id="settlement_service_package" type="text" value="<?php echo safe_data($forms_settings['settlement_service_package']); ?>" name="settlement_service_package">
+            </div>
+            <div class="inpt">
+            <label for="settlement_contract_duration">مدة العقد - نموذج تسوية الغرامة</label>
+            <input id="settlement_contract_duration" type="text" value="<?php echo safe_data($forms_settings['settlement_contract_duration']); ?>" name="settlement_contract_duration">
+            </div>
+            <!-- END settlement form defaults additions -->
             <button class="save">حفظ</button>
         </form>
         </div>
