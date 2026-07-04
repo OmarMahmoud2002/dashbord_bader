@@ -399,3 +399,246 @@
   height: 8px;
   margin: 2px;
 }
+
+/* Add New Feature */
+.employees-timetable-page {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.employees-timetable-page .timetable-toolbar,
+.employees-timetable-page .timetable-week-filter {
+  flex-wrap: wrap;
+}
+
+.employees-timetable-page .timetable-week-filter .btn-group {
+  max-width: 100%;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.employees-timetable-page .timetable-week-filter .week-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.timetable-table-shell {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.timetable-table-shell table {
+  min-width: 680px;
+}
+
+.timetable-table-shell .employee-name-col,
+#supervisorsTableContainer table th:first-child,
+#supervisorsTableContainer table td:first-child,
+#timeDistributionTable th:first-child,
+#timeDistributionTable td:first-child {
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  box-shadow: -1px 0 0 rgba(222, 226, 230, 0.95);
+}
+
+.timetable-table-shell thead .employee-name-col,
+#supervisorsTableContainer table thead th:first-child,
+#timeDistributionTable thead th:first-child {
+  z-index: 4;
+}
+
+@media (max-width: 768px) {
+  .employees-timetable-page {
+    padding: 16px 12px !important;
+  }
+
+  .employees-timetable-page h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem !important;
+  }
+
+  .employees-timetable-page .timetable-toolbar,
+  .employees-timetable-page .timetable-toolbar > .d-flex {
+    width: 100%;
+  }
+
+  .employees-timetable-page .timetable-toolbar > .d-flex {
+    flex-wrap: wrap;
+  }
+
+  .employees-timetable-page .form-select {
+    min-width: 120px;
+    flex: 1 1 120px;
+  }
+
+  .employees-timetable-page .timetable-week-filter .btn-group {
+    display: flex;
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  .employees-timetable-page .week-btn {
+    min-width: 118px;
+    padding: 0.45rem 0.65rem;
+  }
+
+  #scheduleTableContainer:not(:has(.weeks-grid)),
+  #supervisorsTableContainer:not(:has(.weeks-grid)) {
+    max-width: 100%;
+  }
+
+  .timetable-table-shell table {
+    min-width: 620px;
+  }
+
+  .table td,
+  .table th {
+    min-width: 72px;
+    height: 36px;
+    padding: 6px 5px;
+    font-size: 0.78rem;
+  }
+
+  #scheduleTableContainer:not(:has(.weeks-grid)) table .employee-name-col,
+  #supervisorsTableContainer:not(:has(.weeks-grid)) table th:first-child,
+  #supervisorsTableContainer:not(:has(.weeks-grid)) table td:first-child,
+  #timeDistributionTable th:first-child,
+  #timeDistributionTable td:first-child {
+    width: 112px !important;
+    min-width: 112px !important;
+    max-width: 112px;
+    white-space: normal;
+    line-height: 1.35;
+  }
+
+  .table th.vertical-header {
+    min-width: 58px;
+    height: 66px;
+    padding: 3px;
+  }
+
+  .table th.vertical-header .day-name {
+    height: 48px;
+    font-size: 12px;
+  }
+
+  .table th.vertical-header .date {
+    font-size: 11px;
+    bottom: 3px;
+  }
+
+  #scheduleTableContainer:has(.weeks-grid) {
+    padding: 0;
+  }
+
+  #scheduleTableContainer:has(.weeks-grid) .weeks-grid,
+  #scheduleTableContainer:has(.weeks-grid) .weeks-row {
+    display: flex !important;
+    flex-direction: column;
+    gap: 14px !important;
+    width: 100%;
+  }
+
+  #scheduleTableContainer:has(.weeks-grid) .week-wrapper {
+    flex: 1 1 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #scheduleTableContainer:has(.weeks-grid) .week-container {
+    overflow-x: auto;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #scheduleTableContainer:has(.weeks-grid) .week-title {
+    position: sticky;
+    right: 0;
+    width: fit-content;
+    min-width: 140px;
+    margin-right: 0;
+    z-index: 3;
+  }
+
+  #scheduleTableContainer:has(.weeks-grid) table.table {
+    min-width: 560px;
+  }
+
+  #scheduleTableContainer:has(.weeks-grid) table.table td,
+  #scheduleTableContainer:has(.weeks-grid) table.table th {
+    min-width: 54px;
+    height: 28px;
+    padding: 3px;
+    font-size: 11px;
+  }
+
+  #scheduleTableContainer:has(.weeks-grid) table.table .employee-name-col,
+  #scheduleTableContainer:has(.weeks-grid) table.table th:first-child,
+  #scheduleTableContainer:has(.weeks-grid) table.table td:first-child {
+    min-width: 96px !important;
+    max-width: 96px;
+    position: sticky;
+    right: 0;
+    z-index: 3;
+  }
+}
+/* End */
+
+/* Add New Feature */
+@media (max-width: 768px) {
+  body.admin-ui-shell .employees-timetable-page {
+    overflow-x: visible !important;
+  }
+
+  body.admin-ui-shell .employees-timetable-page .timetable-table-shell {
+    display: block !important;
+    width: 100% !important;
+    max-width: calc(100vw - 24px) !important;
+    overflow-x: scroll !important;
+    overflow-y: visible !important;
+    direction: rtl;
+    touch-action: pan-x pan-y;
+    scrollbar-width: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  body.admin-ui-shell .employees-timetable-page .timetable-table-shell::-webkit-scrollbar {
+    height: 9px;
+  }
+
+  body.admin-ui-shell .employees-timetable-page .timetable-table-shell::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(102, 126, 234, 0.45);
+  }
+
+  body.admin-ui-shell .employees-timetable-page #scheduleTableContainer,
+  body.admin-ui-shell .employees-timetable-page #supervisorsTableContainer {
+    display: block;
+    width: max-content;
+    min-width: 100%;
+  }
+
+  body.admin-ui-shell .employees-timetable-page #scheduleTableContainer table,
+  body.admin-ui-shell .employees-timetable-page #supervisorsTableContainer table {
+    width: max-content !important;
+    max-width: none !important;
+  }
+
+  body.admin-ui-shell .employees-timetable-page #scheduleTableContainer:has(.weeks-grid) {
+    width: 100%;
+  }
+
+  body.admin-ui-shell .employees-timetable-page #scheduleTableContainer:has(.weeks-grid) .week-container {
+    display: block;
+    max-width: calc(100vw - 48px);
+    overflow-x: scroll !important;
+  }
+}
+/* End */

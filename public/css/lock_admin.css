@@ -889,3 +889,171 @@ body.admin-ui-shell .admin-ui-lock-admin #salesTable .difference-row td.zero {
     background: #fff !important;
     color: #64748b !important;
 }
+
+/* Add New Feature */
+@media (max-width: 768px) {
+    body.admin-ui-shell .admin-ui-lock-admin {
+        padding-inline: 10px;
+        overflow-x: hidden;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin .lock-c {
+        border-radius: 14px;
+        overflow: visible;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin .app-content-header {
+        margin-bottom: 14px;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin .app-content-headerText {
+        font-size: 24px;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin .app-content-actions {
+        align-items: stretch;
+        gap: 12px;
+        padding: 14px;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin .search-bar,
+    body.admin-ui-shell .admin-ui-lock-admin .app-content-actions-wrapper,
+    body.admin-ui-shell .admin-ui-lock-admin .btn-upload {
+        width: 100%;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin .date-range {
+        width: 100%;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 8px;
+        align-items: center;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin .date-range input,
+    body.admin-ui-shell .admin-ui-lock-admin .date-range .updateDate {
+        width: 100%;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin .date-range .updateDate {
+        grid-column: 1 / -1;
+        min-height: 42px;
+        font-size: 18px;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin .salesReport {
+        margin-inline: 0;
+        padding: 14px 10px 12px;
+        border-radius: 12px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin .title-box {
+        width: 100%;
+        margin-bottom: 12px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        font-size: 14px;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin #salesTable {
+        min-width: 980px;
+        font-size: 12px;
+        border-radius: 12px;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin #salesTable th,
+    body.admin-ui-shell .admin-ui-lock-admin #salesTable td {
+        min-width: 88px;
+        padding: 10px 8px;
+        font-size: 12px;
+        line-height: 1.45;
+        white-space: normal;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin #salesTable .category,
+    body.admin-ui-shell .admin-ui-lock-admin #salesTable th.category,
+    body.admin-ui-shell .admin-ui-lock-admin #salesTable td.category {
+        min-width: 116px;
+        max-width: 128px;
+        padding: 10px 9px;
+        font-size: 12px;
+        text-align: right;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin #salesTable thead th {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        font-size: 12px;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin #salesTable thead th.category {
+        z-index: 8;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin #salesTable th .search-icon {
+        width: 24px;
+        height: 24px;
+        margin-top: 5px;
+        font-size: 13px;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin #salesTable .difference-row td.positive,
+    body.admin-ui-shell .admin-ui-lock-admin #salesTable .difference-row td.negative,
+    body.admin-ui-shell .admin-ui-lock-admin #salesTable .difference-row td.zero,
+    body.admin-ui-shell .admin-ui-lock-admin #salesTable .difference-row td.total {
+        min-width: 88px;
+        padding: 11px 8px;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin .details-popup-container,
+    body.admin-ui-shell #popupOverlay .search-popup-container {
+        width: calc(100vw - 20px);
+        max-height: 88vh;
+        border-radius: 14px;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin .details-popup-content,
+    body.admin-ui-shell #popupOverlay .search-popup-content {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+/* End */
+
+/* Add New Feature */
+@media (max-width: 768px) {
+    body.admin-ui-shell .app-content.admin-ui-lock-admin {
+        overflow-x: visible !important;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin .salesReport {
+        display: block !important;
+        width: 100% !important;
+        max-width: calc(100vw - 20px) !important;
+        overflow-x: scroll !important;
+        overflow-y: visible !important;
+        direction: rtl;
+        touch-action: pan-x pan-y;
+        scrollbar-width: auto;
+        overscroll-behavior-x: contain;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin .salesReport::-webkit-scrollbar {
+        height: 9px;
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin .salesReport::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: rgba(102, 126, 234, 0.45);
+    }
+
+    body.admin-ui-shell .admin-ui-lock-admin #salesTable {
+        width: max-content !important;
+        max-width: none !important;
+        min-width: 980px !important;
+    }
+}
+/* End */

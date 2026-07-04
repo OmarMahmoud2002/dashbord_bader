@@ -18,11 +18,15 @@
   }
 </style>
 
-<div class = 'app-content' style = 'height: fit-content;'>
+<!-- Add New Feature -->
+<div class="app-content admin-ui-page admin-ui-timetable employees-timetable-page" style="height: fit-content;">
+<!-- End -->
   <h2 class="text-center mb-4">جدول الدوام الأسبوعي</h2>
 
   <!-- زر إضافة موظف واختيار الشهر -->
-  <div class="d-flex gap-3 mb-4">
+  <!-- Add New Feature -->
+  <div class="d-flex gap-3 mb-4 timetable-toolbar">
+  <!-- End -->
     <div class="d-flex align-items-center gap-2">
       <select id="yearSelect" class="form-select" style="width: 100px;">
         <option value="2024">2024</option>
@@ -47,7 +51,9 @@
   </div>
 
   <!-- اختيار الأسبوع -->
-  <div class="mb-3">
+  <!-- Add New Feature -->
+  <div class="mb-3 timetable-week-filter">
+  <!-- End -->
     <div class="btn-group" role="group">
       <button class="btn btn-outline-primary week-btn" data-week="0">الأسبوع الأول</button>
       <button class="btn btn-outline-primary week-btn" data-week="1">الأسبوع الثاني</button>
@@ -59,27 +65,22 @@
   </div>
 
   <!-- جدول الدوام -->
-  <div class="table-responsive">
+  <!-- Add New Feature -->
+  <div class="table-responsive timetable-table-shell" aria-label="جدول الدوام الأسبوعي">
     <div id="scheduleTableContainer"></div>
   </div>
-
-  <!-- جدول الموظفين -->
-  <div>
-    <div class="table-responsive">
-      <div id="scheduleTableContainer">
-        <!-- سيتم إضافة جدول الموظفين هنا عبر JavaScript -->
-      </div>
-    </div>
-  </div>
+  <!-- End -->
 
   <!-- جدول المشرفين -->
+  <!-- Add New Feature -->
   <div>
-    <div class="table-responsive">
+    <div class="table-responsive timetable-table-shell" aria-label="جدول المشرفين الأسبوعي">
       <div id="supervisorsTableContainer">
         <!-- سيتم إضافة جدول المشرفين هنا عبر JavaScript -->
       </div>
     </div>
   </div>
+  <!-- End -->
 
   <!-- Modal إضافة موظف -->
   <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel"

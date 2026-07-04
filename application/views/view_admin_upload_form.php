@@ -74,6 +74,22 @@
         .stockd a:hover {
             text-decoration: underline;
         }
+
+        /* Add New Feature */
+        .upload-card-title {
+            margin: 0 0 14px;
+            color: #2d3748;
+            font-size: 18px;
+            font-weight: 900;
+            text-align: center;
+        }
+
+        .upload-form-actions {
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        /* End */
     </style>
  <?php
 $CI =& get_instance();
@@ -92,6 +108,9 @@ $CI->load->model('Excel_import_model');
         <?php echo form_open_multipart(base_url().MOD_VALUE.'excel_import/import',array('class' => 'form-horizontal')); ?>
 
       <div class="stockd">
+            <!-- Add New Feature -->
+            <h2 class="upload-card-title">مبيعات تواصل</h2>
+            <!-- End -->
             <input class="form-control datepicker" autocomplete="off" type="text" placeholder="التاريخ" name="import_date"  required readonly>
         <div style="margin-top:10px;height:100px" class="add_up-co">
           <input id="file" name="file" type="file" accept=".xlsx, .xls" class="file-input" required>
@@ -102,6 +121,21 @@ $CI->load->model('Excel_import_model');
       </a>
       </div>
       	<?php echo form_close(); ?>
+        <!-- Add New Feature -->
+        <?php echo form_open_multipart(base_url().MOD_VALUE.'excel_import/import_erp',array('class' => 'form-horizontal')); ?>
+      <div class="stockd">
+            <h2 class="upload-card-title">مبيعات ERP</h2>
+            <!-- Add New Feature -->
+            <input class="form-control datepicker" autocomplete="off" type="text" placeholder="التاريخ" name="import_date" required readonly>
+            <!-- End -->
+        <div style="margin-top:10px;height:100px" class="add_up-co">
+          <input id="erp_file" name="file" type="file" accept=".xlsx, .xls" class="file-input" required>
+          <p>قم بإسقاط ملف ERP هنا أو انقر لاختيار الملف</p>
+        </div>
+        <button type="submit" name="import_erp">رفع ERP</button>
+      </div>
+        <?php echo form_close(); ?>
+        <!-- End -->
       </div>
 
       <br>
@@ -137,6 +171,39 @@ $CI->load->model('Excel_import_model');
     gap: 10px;
 }
 
+/* Add New Feature */
+.admin-ui-upload-form .upload-form-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: 18px;
+}
+
+.admin-ui-upload-form .upload-form-actions > .form-horizontal {
+    display: block;
+    flex: 1 1 420px;
+    max-width: 560px;
+}
+
+.admin-ui-upload-form .upload-form-actions .stockd {
+    height: 100%;
+    max-width: none;
+    margin: 0;
+}
+
+.admin-ui-upload-form .upload-form-actions .stockd .form-control {
+    max-width: none;
+}
+
+@media (max-width: 1100px) {
+    .admin-ui-upload-form .upload-form-actions > .form-horizontal {
+        flex-basis: 100%;
+        max-width: 640px;
+    }
+}
+/* End */
+
 </style>
     <div class = 'horizontal-container-control'>
         <?php echo form_open_multipart(base_url().MOD_VALUE.'excel_import/delete_by_date',array('class' => 'form-horizontal')); ?>
@@ -168,6 +235,9 @@ $CI->load->model('Excel_import_model');
 			foreach ($excel as $row) {
                   $c_user_name = $CI->Model_admin->get_user_by_id($row['insert_excel_uid']);
         		$user_name=  $c_user_name['user_fillname'];
+                // Add New Feature
+                $display_order_number = !empty($row['insert_excel_new_ordern']) ? $row['insert_excel_new_ordern'] : $row['insert_excel_ordern'];
+                // End
 				$i++;
 				?>
         <div class="products-row ">
@@ -184,7 +254,7 @@ $CI->load->model('Excel_import_model');
             <span class="cell-label">الموظف</span><?php echo safe_data($user_name); ?>
           </div>
           <div class="product-cell image">
-            <span class="cell-label">رقم الطلب</span><?php echo safe_data($row['insert_excel_ordern']); ?>
+            <span class="cell-label">رقم الطلب</span><?php echo safe_data($display_order_number); ?>
           </div>
           <div class="product-cell id"><span class="cell-label">مبيعات تواصل</span><?php echo safe_data($row['insert_excel_twasel']); ?></div>
           <div class="product-cell actions">

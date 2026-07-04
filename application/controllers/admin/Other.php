@@ -2216,10 +2216,16 @@ class Other extends MY_Controller {
 		$employee = $this->Model_admin->get_user_by_id($segment);
 		$custody1 = $this->Custodys->get_custodys(['user_id' => $segment, 'type' => 1]);
 		$custody2 = $this->Custodys->get_custodys(['user_id' => $segment, 'type' => 2]);
+		// Add New Feature
+		$sold_devices = $this->Excel_import_model->get_employee_sold_devices($segment);
+		// End
 		
 		$this->data['employee'] = $employee;
 		$this->data['custody_devices'] = $custody1;
 		$this->data['custody_cards'] = $custody2;
+		// Add New Feature
+		$this->data['sold_devices'] = $sold_devices;
+		// End
 		$this->load->view('view_admin_employee',$this->data);
 	}
 

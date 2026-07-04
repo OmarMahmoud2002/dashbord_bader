@@ -100,8 +100,8 @@ $size = 17;
             
                 // استدعاء بيانات الشبكة والنقدي
                 $userlock = $this->Model_admin->getlock_by_userid($user_id, $date_start, $date_end);
-                $network_amounts[$user_id] = $userlock['user_lock_span'];
-                $cash_amounts[$user_id] = $userlock['user_lock_cash'];
+                $network_amounts[$user_id] = isset($userlock['user_lock_span']) ? (float) $userlock['user_lock_span'] : 0;
+                $cash_amounts[$user_id] = isset($userlock['user_lock_cash']) ? (float) $userlock['user_lock_cash'] : 0;
             }
         } else {
             // إذا لم يكن هناك تواريخ محددة، استخدم القيم الافتراضية (يمكن تعديلها حسب الحاجة)

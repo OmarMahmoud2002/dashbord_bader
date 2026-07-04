@@ -309,14 +309,17 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
 
         // Sadly, some 3rd party xlsx generators don't use consistent case for filenaming
         //    so we need to load case-insensitively from the zip file
+        // Add New Feature
+        $zipArchiveFlNoCase = class_exists('ZipArchive') ? ZipArchive::FL_NOCASE : 1;
+        // End
         
         // Apache POI fixes
         $contents = $archive->getFromIndex(
-            $archive->locateName($fileName, ZIPARCHIVE::FL_NOCASE)
+            $archive->locateName($fileName, $zipArchiveFlNoCase)
         );
         if ($contents === false) {
             $contents = $archive->getFromIndex(
-                $archive->locateName(substr($fileName, 1), ZIPARCHIVE::FL_NOCASE)
+                $archive->locateName(substr($fileName, 1), $zipArchiveFlNoCase)
             );
         }
 

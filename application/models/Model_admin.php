@@ -127,8 +127,19 @@ class Model_admin extends CI_Model
     
     function get_user_by_uid($id)
     {
-        $sql = "SELECT * FROM tbl_user WHERE user_employee_Id=? and user_type = 'user' ";
-        $query = $this->db->query($sql,$id);
+        // Add New Feature
+        $id = trim((string) $id);
+        $this->db->select('*');
+        $this->db->from('tbl_user');
+        $this->db->where('user_type', 'user');
+        $this->db->group_start();
+        $this->db->where('user_employee_Id', $id);
+        if ($this->db->field_exists('job_number', 'tbl_user')) {
+            $this->db->or_where('job_number', $id);
+        }
+        $this->db->group_end();
+        $query = $this->db->get();
+        // End
         return $query->first_row('array');
     }
     

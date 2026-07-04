@@ -140,26 +140,125 @@ $CI->load->model('Model_admin');
             </div>
           </div>
           <div class="sec t4_section">
-            <div class="d">
-              <span>جهاز 1</span>
-              <span>54q6s654s654f6dsf6</span>
+            <!-- Add New Feature -->
+            <?php
+              $sold_devices = isset($sold_devices) && is_array($sold_devices) ? $sold_devices : [];
+              $sold_devices_total = 0;
+              foreach ($sold_devices as $sold_device) {
+                // Add New Feature
+                $sold_devices_total += (float) $sold_device['insert_excel_sales_amount'];
+                // End
+              }
+            ?>
+            <div class="employee-sold-devices">
+              <div class="employee-sold-devices__summary">
+                <div>
+                  <span>الأجهزة المباعة</span>
+                  <strong><?php echo number_format(count($sold_devices)); ?></strong>
+                </div>
+                <div>
+                  <!-- Add New Feature -->
+                  <span>إجمالي مبلغ المبيعات</span>
+                  <!-- End -->
+                  <strong><?php echo number_format($sold_devices_total, 2); ?></strong>
+                </div>
+              </div>
+
+              <?php if (count($sold_devices) > 0): ?>
+                <!-- Add New Feature -->
+                <div class="employee-sold-devices__filters">
+                  <div class="employee-sold-devices__search">
+                    <i class="bi bi-search"></i>
+                    <input type="search" id="soldDevicesOrderSearch" placeholder="بحث برقم الطلب" autocomplete="off">
+                  </div>
+                  <div class="employee-sold-devices__search employee-sold-devices__date-filter">
+                    <i class="bi bi-calendar3"></i>
+                    <input type="date" id="soldDevicesDateSearch" aria-label="بحث بالتاريخ">
+                  </div>
+                </div>
+                <!-- End -->
+                <div class="products-area-wrapper tableView employee-sold-devices__table">
+                  <div class="products-header">
+                    <!-- Add New Feature -->
+                    <div class="product-cell sold-date">التاريخ</div>
+                    <!-- End -->
+                    <div class="product-cell sold-order">رقم الطلب</div>
+                    <!-- Add New Feature -->
+                    <div class="product-cell sold-type">النوع</div>
+                    <!-- End -->
+                    <div class="product-cell sold-description">الوصف</div>
+                    <div class="product-cell sold-serial">PRODUCT SERIAL NUMBER</div>
+                    <!-- Add New Feature -->
+                    <div class="product-cell sold-payment">مبلغ المبيعات</div>
+                    <!-- End -->
+                  </div>
+                  <?php foreach ($sold_devices as $sold_device): ?>
+                    <?php
+                      $display_order_number = !empty($sold_device['insert_excel_new_ordern']) ? $sold_device['insert_excel_new_ordern'] : $sold_device['insert_excel_ordern'];
+                      // Add New Feature
+                      $sales_type = !empty($sold_device['insert_excel_sales_type']) ? $sold_device['insert_excel_sales_type'] : '-';
+                      // End
+                      $description = !empty($sold_device['insert_excel_description']) ? $sold_device['insert_excel_description'] : '-';
+                      $serial_number = !empty($sold_device['insert_excel_product_serial_number']) ? $sold_device['insert_excel_product_serial_number'] : '-';
+                      // Add New Feature
+                      $sold_date_timestamp = !empty($sold_device['insert_excel_date']) ? strtotime($sold_device['insert_excel_date']) : false;
+                      $sold_date = $sold_date_timestamp ? date('Y-m-d', $sold_date_timestamp) : '-';
+                      // End
+                    ?>
+                    <!-- Add New Feature -->
+                    <div class="products-row" data-order-number="<?php echo htmlspecialchars((string) $display_order_number, ENT_QUOTES, 'UTF-8'); ?>" data-sold-date="<?php echo htmlspecialchars((string) $sold_date, ENT_QUOTES, 'UTF-8'); ?>">
+                    <!-- End -->
+                      <!-- Add New Feature -->
+                      <div class="product-cell sold-date">
+                        <span class="cell-label">التاريخ</span>
+                        <span dir="ltr"><?php echo htmlspecialchars((string) $sold_date, ENT_QUOTES, 'UTF-8'); ?></span>
+                      </div>
+                      <!-- End -->
+                      <div class="product-cell sold-order">
+                        <span class="cell-label">رقم الطلب</span>
+                        <span><?php echo htmlspecialchars((string) $display_order_number, ENT_QUOTES, 'UTF-8'); ?></span>
+                      </div>
+                      <!-- Add New Feature -->
+                      <div class="product-cell sold-type">
+                        <span class="cell-label">النوع</span>
+                        <span><?php echo htmlspecialchars((string) $sales_type, ENT_QUOTES, 'UTF-8'); ?></span>
+                      </div>
+                      <!-- End -->
+                      <div class="product-cell sold-description">
+                        <span class="cell-label">الوصف</span>
+                        <span><?php echo htmlspecialchars((string) $description, ENT_QUOTES, 'UTF-8'); ?></span>
+                      </div>
+                      <div class="product-cell sold-serial">
+                        <span class="cell-label">PRODUCT SERIAL NUMBER</span>
+                        <span dir="ltr"><?php echo htmlspecialchars((string) $serial_number, ENT_QUOTES, 'UTF-8'); ?></span>
+                      </div>
+                      <div class="product-cell sold-payment">
+                        <!-- Add New Feature -->
+                        <span class="cell-label">مبلغ المبيعات</span>
+                        <span dir="ltr"><?php echo number_format((float) $sold_device['insert_excel_sales_amount'], 2); ?></span>
+                        <!-- End -->
+                      </div>
+                    </div>
+                  <?php endforeach; ?>
+                </div>
+                <!-- Add New Feature -->
+                <div class="employee-sold-devices__no-results" id="soldDevicesNoResults">
+                  لا توجد نتائج مطابقة للفلاتر المحددة
+                </div>
+                <div class="employee-sold-devices__pagination" id="soldDevicesPagination">
+                  <button type="button" id="soldDevicesPrevPage">السابق</button>
+                  <span id="soldDevicesPageInfo"></span>
+                  <button type="button" id="soldDevicesNextPage">التالي</button>
+                </div>
+                <!-- End -->
+              <?php else: ?>
+                <div class="empty-admin-state employee-sold-devices__empty">
+                  <i class="bi bi-box-seam"></i>
+                  <p>لا توجد أجهزة مباعة لهذا الموظف حتى الآن</p>
+                </div>
+              <?php endif; ?>
             </div>
-            <div class="d">
-              <span>جهاز 1</span>
-              <span>54q6s654s654f6dsf6</span>
-            </div>
-            <div class="d">
-              <span>جهاز 1</span>
-              <span>54q6s654s654f6dsf6</span>
-            </div>
-            <div class="d">
-              <span>جهاز 1</span>
-              <span>54q6s654s654f6dsf6</span>
-            </div>
-            <div class="d">
-              <span>جهاز 1</span>
-              <span>54q6s654s654f6dsf6</span>
-            </div>
+            <!-- End -->
           </div>
           <div class="sec t5_section">
             <?php echo form_open(base_url().MOD_VALUE.'index.php/admin/edit_emp_info',array('class' => '')); ?>
@@ -249,6 +348,243 @@ $CI->load->model('Model_admin');
   
 <style>
 
+    /* Add New Feature */
+    .employee-sold-devices {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .employee-sold-devices__summary {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .employee-sold-devices__summary > div {
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        border-radius: 14px;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.07);
+        padding: 16px;
+    }
+
+    .employee-sold-devices__summary span {
+        display: block;
+        margin-bottom: 8px;
+        color: #718096;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .employee-sold-devices__summary strong {
+        display: block;
+        color: #2d3748;
+        font-size: 22px;
+        line-height: 1.2;
+        direction: ltr;
+        text-align: right;
+    }
+
+    .employee-sold-devices__filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .employee-sold-devices__search {
+        position: relative;
+        max-width: 360px;
+        flex: 1 1 240px;
+    }
+
+    .employee-sold-devices__search i {
+        position: absolute;
+        top: 50%;
+        right: 14px;
+        transform: translateY(-50%);
+        color: #667eea;
+        font-size: 15px;
+        pointer-events: none;
+    }
+
+    .employee-sold-devices__search input {
+        width: 100%;
+        height: 44px;
+        border: 1px solid rgba(226, 232, 240, 0.95);
+        border-radius: 12px;
+        background: #fff;
+        color: #2d3748;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+        padding: 0 42px 0 14px;
+        font-size: 14px;
+        font-weight: 700;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .employee-sold-devices__search input:focus {
+        border-color: rgba(102, 126, 234, 0.55);
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.12);
+    }
+
+    .employee-sold-devices__date-filter {
+        max-width: 220px;
+    }
+
+    .employee-sold-devices__table {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .employee-sold-devices__table .products-header,
+    .employee-sold-devices__table .products-row {
+        display: grid;
+        /* Add New Feature */
+        grid-template-columns: minmax(112px, 0.65fr) minmax(140px, 0.8fr) minmax(130px, 0.75fr) minmax(220px, 1.5fr) minmax(190px, 1fr) minmax(130px, 0.7fr);
+        /* End */
+        align-items: center;
+    }
+
+    .employee-sold-devices__table .product-cell {
+        min-width: 0;
+        word-break: break-word;
+    }
+
+    .employee-sold-devices__table .sold-description span:last-child {
+        line-height: 1.7;
+    }
+
+    .employee-sold-devices__table .sold-serial span:last-child {
+        color: #4a5568;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 13px;
+    }
+
+    /* Add New Feature */
+    .employee-sold-devices__table .sold-type span:last-child {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        background: rgba(102, 126, 234, 0.12);
+        color: #4c51bf;
+        font-size: 12px;
+        font-weight: 900;
+        padding: 7px 10px;
+    }
+    /* End */
+
+    .employee-sold-devices__table .sold-payment span:last-child {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 92px;
+        border-radius: 999px;
+        background: rgba(67, 233, 123, 0.15);
+        color: #065f46;
+        font-weight: 900;
+        padding: 7px 10px;
+    }
+
+    .employee-sold-devices__empty {
+        margin: 0;
+    }
+
+    .employee-sold-devices__no-results {
+        display: none;
+        border: 1px dashed rgba(102, 126, 234, 0.32);
+        border-radius: 12px;
+        background: #f8fafc;
+        color: #718096;
+        font-weight: 800;
+        padding: 14px;
+        text-align: center;
+    }
+
+    .employee-sold-devices__pagination {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .employee-sold-devices__pagination button {
+        min-width: 92px;
+        border: 0;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        font-weight: 800;
+        padding: 9px 14px;
+        cursor: pointer;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .employee-sold-devices__pagination button:hover:not(:disabled) {
+        transform: translateY(-1px);
+    }
+
+    .employee-sold-devices__pagination button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+    }
+
+    .employee-sold-devices__pagination span {
+        color: #4a5568;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    @media (max-width: 768px) {
+        .employee-sold-devices__summary {
+            grid-template-columns: 1fr;
+        }
+
+        .employee-sold-devices__filters {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .employee-sold-devices__search {
+            max-width: 100%;
+            flex-basis: auto;
+        }
+
+        .employee-sold-devices__date-filter {
+            max-width: 100%;
+        }
+
+        .employee-sold-devices__table .products-header {
+            display: none;
+        }
+
+        .employee-sold-devices__table .products-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            padding: 14px;
+        }
+
+        .employee-sold-devices__table .product-cell {
+            display: flex;
+            justify-content: space-between;
+            gap: 14px;
+            width: 100%;
+            text-align: right;
+        }
+
+        .employee-sold-devices__table .product-cell .cell-label {
+            display: inline-flex;
+            color: #718096;
+            font-weight: 800;
+            min-width: 118px;
+        }
+    }
+    /* End */
+
     .formGroup {
         display: flex;
         flex-direction: column;
@@ -335,6 +671,98 @@ function search() {
     }
   }
 }
+// Add New Feature
+const soldDevicesOrderSearch = document.getElementById("soldDevicesOrderSearch");
+const soldDevicesDateSearch = document.getElementById("soldDevicesDateSearch");
+const soldDevicesRows = Array.from(document.querySelectorAll(".employee-sold-devices__table .products-row"));
+const soldDevicesNoResults = document.getElementById("soldDevicesNoResults");
+const soldDevicesPagination = document.getElementById("soldDevicesPagination");
+const soldDevicesPrevPage = document.getElementById("soldDevicesPrevPage");
+const soldDevicesNextPage = document.getElementById("soldDevicesNextPage");
+const soldDevicesPageInfo = document.getElementById("soldDevicesPageInfo");
+const soldDevicesPageSize = 20;
+let soldDevicesCurrentPage = 1;
+
+function getFilteredSoldDeviceRows() {
+  const orderQuery = soldDevicesOrderSearch ? soldDevicesOrderSearch.value.trim().toLowerCase() : "";
+  const dateQuery = soldDevicesDateSearch ? soldDevicesDateSearch.value : "";
+
+  return soldDevicesRows.filter(function (row) {
+    const orderNumber = (row.dataset.orderNumber || "").toLowerCase();
+    const soldDate = row.dataset.soldDate || "";
+    return orderNumber.includes(orderQuery) && (!dateQuery || soldDate === dateQuery);
+  });
+}
+
+function renderSoldDevicesPage() {
+  if (!soldDevicesRows.length) {
+    return;
+  }
+
+  const filteredRows = getFilteredSoldDeviceRows();
+  const totalPages = Math.max(1, Math.ceil(filteredRows.length / soldDevicesPageSize));
+  soldDevicesCurrentPage = Math.min(soldDevicesCurrentPage, totalPages);
+  const startIndex = (soldDevicesCurrentPage - 1) * soldDevicesPageSize;
+  const endIndex = startIndex + soldDevicesPageSize;
+  const currentPageRows = filteredRows.slice(startIndex, endIndex);
+  const currentPageRowsSet = new Set(currentPageRows);
+
+  soldDevicesRows.forEach(function (row) {
+    row.style.display = currentPageRowsSet.has(row) ? "" : "none";
+  });
+
+  if (soldDevicesNoResults) {
+    soldDevicesNoResults.style.display = filteredRows.length === 0 ? "block" : "none";
+  }
+
+  if (soldDevicesPagination) {
+    soldDevicesPagination.style.display = filteredRows.length > soldDevicesPageSize ? "flex" : "none";
+  }
+
+  if (soldDevicesPrevPage) {
+    soldDevicesPrevPage.disabled = soldDevicesCurrentPage <= 1;
+  }
+
+  if (soldDevicesNextPage) {
+    soldDevicesNextPage.disabled = soldDevicesCurrentPage >= totalPages;
+  }
+
+  if (soldDevicesPageInfo) {
+    // Add New Feature
+    soldDevicesPageInfo.textContent = "صفحة " + soldDevicesCurrentPage + " من " + totalPages + " - " + filteredRows.length + " عملية بيع";
+    // End
+  }
+}
+
+function resetSoldDevicesPage() {
+  soldDevicesCurrentPage = 1;
+  renderSoldDevicesPage();
+}
+
+if (soldDevicesOrderSearch) {
+  soldDevicesOrderSearch.addEventListener("input", resetSoldDevicesPage);
+}
+
+if (soldDevicesDateSearch) {
+  soldDevicesDateSearch.addEventListener("change", resetSoldDevicesPage);
+}
+
+if (soldDevicesPrevPage) {
+  soldDevicesPrevPage.addEventListener("click", function () {
+    soldDevicesCurrentPage--;
+    renderSoldDevicesPage();
+  });
+}
+
+if (soldDevicesNextPage) {
+  soldDevicesNextPage.addEventListener("click", function () {
+    soldDevicesCurrentPage++;
+    renderSoldDevicesPage();
+  });
+}
+
+renderSoldDevicesPage();
+// End
 // Switch links
 $(".links_stng li").click(function () {
       $(this).addClass("active").siblings().removeClass("active");

@@ -31,6 +31,11 @@ CREATE TABLE `tbl_insert_excel` (
   `insert_excel_id` int(11) NOT NULL,
   `insert_excel_date` varchar(120) NOT NULL,
   `insert_excel_ordern` varchar(120) NOT NULL,
+  -- Add New Feature
+  `insert_excel_new_ordern` varchar(120) NOT NULL DEFAULT '',
+  `insert_excel_description` varchar(255) NOT NULL DEFAULT '',
+  `insert_excel_product_serial_number` varchar(255) NOT NULL DEFAULT '',
+  -- End
   `insert_excel_uid` int(11) NOT NULL,
   `insert_excel_twasel` varchar(120) NOT NULL,
   `insert_excel_electronic` varchar(120) NOT NULL,
