@@ -1,9 +1,51 @@
 <?php
 class Excel_import_model extends CI_Model
 {
+ private $table = 'tbl_insert_excel';
+
+ function __construct()
+ {
+    parent::__construct();
+    $this->ensure_sales_metadata_columns();
+ }
+
+ private function ensure_sales_metadata_columns()
+ {
+    $columns = array(
+        'insert_excel_new_ordern' => array(
+            'type' => 'VARCHAR',
+            'constraint' => 120,
+            'null' => FALSE,
+            'default' => '',
+            'after' => 'insert_excel_ordern'
+        ),
+        'insert_excel_description' => array(
+            'type' => 'VARCHAR',
+            'constraint' => 255,
+            'null' => FALSE,
+            'default' => '',
+            'after' => 'insert_excel_new_ordern'
+        ),
+        'insert_excel_product_serial_number' => array(
+            'type' => 'VARCHAR',
+            'constraint' => 255,
+            'null' => FALSE,
+            'default' => '',
+            'after' => 'insert_excel_description'
+        )
+    );
+
+    foreach ($columns as $column_name => $definition) {
+        if (!$this->db->field_exists($column_name, $this->table)) {
+            $this->load->dbforge();
+            $this->dbforge->add_column($this->table, array($column_name => $definition));
+        }
+    }
+ }
+
  function select() {
     $this->db->select('*');
-    $this->db->from('tbl_insert_excel');
+    $this->db->from($this->table);
     $this->db->order_by('insert_excel_id', 'DESC');
     // Add New Feature
     $this->db->where('CAST(insert_excel_twasel AS DECIMAL(12,2)) >', 0);
@@ -14,7 +56,7 @@ class Excel_import_model extends CI_Model
 
 function select2() {
     $this->db->select('*');
-    $this->db->from('tbl_insert_excel');
+    $this->db->from($this->table);
     $this->db->order_by('insert_excel_id', 'DESC');
     $this->db->where('insert_excel_twasel =', ''); // تأكد من أن القيمة ليست فارغة
     $query = $this->db->get();
@@ -24,7 +66,7 @@ function select2() {
 // Add New Feature
 public function get_employee_sold_devices($user_id) {
     $this->db->select('insert_excel_id, insert_excel_date, insert_excel_ordern, insert_excel_new_ordern, insert_excel_description, insert_excel_product_serial_number, insert_excel_twasel, insert_excel_jowy, insert_excel_quickplus');
-    $this->db->from('tbl_insert_excel');
+    $this->db->from($this->table);
     $this->db->where('insert_excel_uid', $user_id);
     $this->db->where("(CAST(insert_excel_twasel AS DECIMAL(12,2)) > 0 OR CAST(insert_excel_jowy AS DECIMAL(12,2)) > 0 OR CAST(insert_excel_quickplus AS DECIMAL(12,2)) > 0)", null, false);
     $this->db->where("(insert_excel_ordern != '' OR insert_excel_new_ordern != '' OR insert_excel_description != '' OR insert_excel_product_serial_number != '')", null, false);
@@ -70,7 +112,7 @@ public function get_employee_sold_devices($user_id) {
 
 public function selectbyid($user_id, $start_date, $end_date) {
     $this->db->select('*');
-    $this->db->from('tbl_insert_excel');
+    $this->db->from($this->table);
     $this->db->where('insert_excel_uid', $user_id);
     if ($start_date != '') {
         $this->db->where('insert_excel_date >=', $start_date);
@@ -83,7 +125,7 @@ public function selectbyid($user_id, $start_date, $end_date) {
 
 public function selectall() {
     $this->db->select('insert_excel_uid, insert_excel_date, SUM(insert_excel_twasel) as insert_excel_twasel, SUM(insert_excel_electronic) as insert_excel_electronic, SUM(insert_excel_jowy) as insert_excel_jowy, SUM(insert_excel_quickplus) as insert_excel_quickplus');
-    $this->db->from('tbl_insert_excel');
+    $this->db->from($this->table);
     $this->db->group_by(['insert_excel_uid', 'insert_excel_date']);
     $this->db->order_by('insert_excel_date', 'DESC');
     $query = $this->db->get();
@@ -92,7 +134,7 @@ public function selectall() {
 
  function insert_sales($data)
  {
-   $this->db->insert('tbl_insert_excel', $data);
+   $this->db->insert($this->table, $data);
     //return $this->db->insert('tbl_insert_excel', $data);
  }
 
@@ -154,7 +196,7 @@ public function selectall() {
      $lookup_keys = array_unique($lookup_keys);
 
      $existing_records = $this->db->select('insert_excel_uid, insert_excel_date, insert_excel_ordern, insert_excel_new_ordern, insert_excel_description, insert_excel_product_serial_number, insert_excel_twasel, insert_excel_electronic, insert_excel_jowy, insert_excel_quickplus')
-                                  ->from('tbl_insert_excel')
+                                  ->from($this->table)
                                   ->where_in("CONCAT(insert_excel_uid, '|', insert_excel_date)", $lookup_keys)
                                   ->get()
                                   ->result_array();
@@ -189,7 +231,7 @@ public function selectall() {
      }
 
      if (!empty($filtered_data)) {
-         $this->db->insert_batch('tbl_insert_excel', $filtered_data);
+         $this->db->insert_batch($this->table, $filtered_data);
          return count($filtered_data);
      }
 
@@ -200,7 +242,7 @@ public function selectall() {
   
     public function delete_records_by_date($date) {
         $this->db->where('insert_excel_date', $date);
-        $this->db->delete('tbl_insert_excel');
+        $this->db->delete($this->table);
     }
 
 

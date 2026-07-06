@@ -108,7 +108,23 @@ function setSerialCheckState(serialItem, state, message) {
     }
 }
 
-function checkSerialExists(serial) {
+function setSerialSubinventoryCode(serialItem, subinventoryCode) {
+    if (!serialItem) {
+        return
+    }
+
+    const subinventory = serialItem.querySelector('.serial-subinventory')
+    if (!subinventory) {
+        return
+    }
+
+    const code = String(subinventoryCode || '').trim()
+    subinventory.textContent = code
+    subinventory.hidden = code === ''
+    subinventory.dataset.tone = code === '23012' ? 'ok' : 'warn'
+}
+
+function checkSerialDetails(serial) {
     if (Object.prototype.hasOwnProperty.call(shelfSerialCheckCache, serial)) {
         return Promise.resolve(shelfSerialCheckCache[serial])
     }
@@ -120,9 +136,12 @@ function checkSerialExists(serial) {
             dataType: 'json',
             data: { serial: serial }
         }).done((response) => {
-            const exists = !!(response && response.exists)
-            shelfSerialCheckCache[serial] = exists
-            resolve(exists)
+            const details = {
+                exists: !!(response && response.exists),
+                subinventoryCode: response && response.subinventory_code ? response.subinventory_code : ''
+            }
+            shelfSerialCheckCache[serial] = details
+            resolve(details)
         }).fail((xhr) => {
             reject(xhr)
         })
@@ -142,20 +161,22 @@ function checkSerialItem(serialItem) {
 
     setSerialCheckState(serialItem, 'pending')
 
-    return checkSerialExists(serial).then((exists) => {
+    return checkSerialDetails(serial).then((details) => {
         if (!document.body.contains(serialItem)) {
-            return exists
+            return details.exists
         }
 
+        setSerialSubinventoryCode(serialItem, details.exists ? details.subinventoryCode : '')
         setSerialCheckState(
             serialItem,
-            exists ? 'valid' : 'invalid',
-            exists ? 'السيريال موجود' : 'السيريال غير موجود'
+            details.exists ? 'valid' : 'invalid',
+            details.exists ? 'السيريال موجود' : 'السيريال غير موجود'
         )
 
-        return exists
+        return details.exists
     }).catch(() => {
         if (document.body.contains(serialItem)) {
+            setSerialSubinventoryCode(serialItem, '')
             setSerialCheckState(serialItem, 'error', 'تعذر التحقق من السيريال')
         }
 
@@ -303,7 +324,18 @@ function add_serial(serialValue, posterValue, source) {
     serialItem.dataset.serial = serial
 
     const serialText = document.createElement('span')
-    serialText.textContent = serial
+    serialText.className = 'serial-details'
+
+    const serialNumber = document.createElement('strong')
+    serialNumber.className = 'serial-value'
+    serialNumber.textContent = serial
+
+    const subinventoryText = document.createElement('small')
+    subinventoryText.className = 'serial-subinventory'
+    subinventoryText.hidden = true
+
+    serialText.appendChild(serialNumber)
+    serialText.appendChild(subinventoryText)
 
     const serialInput = document.createElement('input')
     serialInput.type = 'hidden'

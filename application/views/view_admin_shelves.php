@@ -532,6 +532,37 @@ $shelf_reorder_error = $this->session->flashdata('shelf_reorder_error');
     color: #25364d;
 }
 
+.serial .serial-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2px;
+}
+
+.serial .serial-value {
+    display: block;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+.serial .serial-subinventory {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #b42318;
+}
+
+.serial .serial-subinventory[data-tone="ok"] {
+    color: #157347;
+}
+
+.serial .serial-subinventory[hidden] {
+    display: none;
+}
+
 .serial i {
     font-size: 20px;
     width: 44px;
@@ -614,6 +645,24 @@ $shelf_reorder_error = $this->session->flashdata('shelf_reorder_error');
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    .serial .serial-details {
+        align-items: flex-start;
+        justify-content: center;
+        white-space: normal;
+        text-overflow: clip;
+    }
+
+    .serial .serial-value {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 13px;
+    }
+
+    .serial .serial-subinventory {
+        font-size: 10px;
     }
 
     .serial-poster-input {

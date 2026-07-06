@@ -23,6 +23,13 @@ Files modified :
         free_form/script2.js
 
 
+        modified:   application/config/database.php
+        modified:   application/controllers/admin/Shelves.php
+        modified:   application/models/Excel_import_model.php
+        modified:   application/views/view_admin_shelves.php
+        modified:   public/js/shelf.js
+
+
 
 
 

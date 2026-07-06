@@ -93,6 +93,7 @@ class Shelves extends MY_Controller {
                 ->set_output(json_encode(array(
                     'status' => 'error',
                     'exists' => false,
+                    'subinventory_code' => null,
                     'description' => 'غير مصرح'
                 )));
             return;
@@ -106,6 +107,7 @@ class Shelves extends MY_Controller {
                 ->set_output(json_encode(array(
                     'status' => 'error',
                     'exists' => false,
+                    'subinventory_code' => null,
                     'description' => 'السيريال فارغ'
                 )));
             return;
@@ -118,7 +120,8 @@ class Shelves extends MY_Controller {
             ->set_output(json_encode(array(
                 'status' => 'success',
                 'exists' => !empty($item),
-                'serial' => $serial_number
+                'serial' => $serial_number,
+                'subinventory_code' => !empty($item) ? $item['subinventory_code'] : null
             )));
     }
 
