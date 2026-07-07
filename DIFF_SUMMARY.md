@@ -80,3 +80,8 @@ Untracked files:
   (use "git add <file>..." to include in what will be committed)
         docs/
 
+-------------------------------------------------------------------------------
+        modified:   application/controllers/Excel_import.php
+        modified:   application/models/Model_admin.php
+        modified:   application/views/view_admin_upload_form.php
+-------------------------------------------------------------------------------

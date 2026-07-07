@@ -111,7 +111,7 @@ $CI->load->model('Excel_import_model');
             <!-- Add New Feature -->
             <h2 class="upload-card-title">مبيعات تواصل</h2>
             <!-- End -->
-            <input class="form-control datepicker" autocomplete="off" type="text" placeholder="التاريخ" name="import_date"  required readonly>
+            <input class="form-control datepicker" autocomplete="off" type="text" placeholder="التاريخ" name="import_date" readonly>
         <div style="margin-top:10px;height:100px" class="add_up-co">
           <input id="file" name="file" type="file" accept=".xlsx, .xls" class="file-input" required>
           <p>قم بإسقاط الملفات هنا للتحميل أو انقر لاختيار الملفات للتحميل</p>
@@ -126,7 +126,7 @@ $CI->load->model('Excel_import_model');
       <div class="stockd">
             <h2 class="upload-card-title">مبيعات ERP</h2>
             <!-- Add New Feature -->
-            <input class="form-control datepicker" autocomplete="off" type="text" placeholder="التاريخ" name="import_date" required readonly>
+            <input class="form-control datepicker" autocomplete="off" type="text" placeholder="التاريخ" name="import_date" readonly>
             <!-- End -->
         <div style="margin-top:10px;height:100px" class="add_up-co">
           <input id="erp_file" name="file" type="file" accept=".xlsx, .xls" class="file-input" required>

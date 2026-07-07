@@ -55,7 +55,7 @@ class Excel_import extends CI_Controller
      }
 
      if (is_numeric($value)) {
-         return date('Y-m-d', PHPExcel_Shared_Date::ExcelToPHP($value));
+         return gmdate('Y-m-d', PHPExcel_Shared_Date::ExcelToPHP($value));
      }
 
      $formattedValue = trim((string) $value);
@@ -148,11 +148,6 @@ function import()
         $valid = 1;
         $error = '';
 
-        // Fetch the import date from POST data
-        // Add New Feature
-        $import_date = $this->input->post('import_date', true);
-        // End
-
         if ($valid == 1) {
             $path = $_FILES["file"]["tmp_name"];
             // Add New Feature
@@ -175,9 +170,7 @@ function import()
                     // Only process rows where the status is 'Complete'
                     if ($status === 'Complete') {
                         $insert_excel_uid = $this->getTrimmedCellValue($worksheet, 17, $row);
-                        $dateTime = $worksheet->getCellByColumnAndRow(0, $row)->getValue();
-                        $excel_date = (($dateTime - 25569) * 86400);
-                        $insert_excel_date = date('Y-m-d', $excel_date);
+                        $insert_excel_date = $this->getExcelDateString($worksheet, 0, $row);
                         $insert_excel_ordern = $this->getTrimmedCellValue($worksheet, 1, $row);
 
                         // Add New Feature
@@ -190,7 +183,7 @@ function import()
                         $user_id = isset($c_user_name['user_id']) ? (int) $c_user_name['user_id'] : 0;
                         $insert_excel_twasel = $worksheet->getCellByColumnAndRow(13, $row)->getValue();
 
-                        if ($insert_excel_date === $import_date && ($insert_excel_twasel > 0) && $user_id > 0 ) {
+                        if ($insert_excel_date !== '' && ($insert_excel_twasel > 0) && $user_id > 0 ) {
                             $data[] = array(
                                 'insert_excel_date' => $insert_excel_date,
                                 'insert_excel_uid' => $user_id,
@@ -241,15 +234,6 @@ function import_erp()
     if (isset($_FILES["file"]["name"])) {
         $valid = 1;
         $error = '';
-        $import_date = $this->input->post('import_date', true);
-
-        // Add New Feature
-        if (empty($import_date)) {
-            $valid = 0;
-            $error .= "ادخل التاريخ<br>";
-        }
-        // End
-
         if ($valid == 1) {
             $path = $_FILES["file"]["tmp_name"];
             if (!class_exists('ZipArchive') && class_exists('PHPExcel_Settings')) {
@@ -264,11 +248,9 @@ function import_erp()
 
                 for ($row = 2; $row <= $highestRow; $row++) {
                     $insert_excel_date = $this->getExcelDateString($worksheet, 0, $row);
-                    // Add New Feature
-                    if ($insert_excel_date !== $import_date) {
+                    if ($insert_excel_date === '') {
                         continue;
                     }
-                    // End
 
                     $sales_type = $this->getTrimmedCellValue($worksheet, 10, $row);
                     $sales_column = $this->getErpSalesColumn($sales_type);
@@ -329,7 +311,7 @@ function import_erp()
                 }
             } else {
                 // Add New Feature
-                $this->session->set_flashdata('error', 'لاتوجد بيانات ERP مطابقة للتاريخ المدخل');
+                $this->session->set_flashdata('error', 'لاتوجد بيانات ERP صالحة للحفظ في الملف');
                 // End
             }
 
