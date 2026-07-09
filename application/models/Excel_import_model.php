@@ -32,6 +32,13 @@ class Excel_import_model extends CI_Model
             'null' => FALSE,
             'default' => '',
             'after' => 'insert_excel_description'
+        ),
+        'insert_excel_duplicate_identifier' => array(
+            'type' => 'VARCHAR',
+            'constraint' => 120,
+            'null' => FALSE,
+            'default' => '',
+            'after' => 'insert_excel_product_serial_number'
         )
     );
 
@@ -145,6 +152,7 @@ public function selectall() {
         $data[$index]['insert_excel_electronic'] = isset($record['insert_excel_electronic']) ? $record['insert_excel_electronic'] : '0';
         $data[$index]['insert_excel_jowy'] = isset($record['insert_excel_jowy']) ? $record['insert_excel_jowy'] : '0';
         $data[$index]['insert_excel_quickplus'] = isset($record['insert_excel_quickplus']) ? $record['insert_excel_quickplus'] : '0';
+        $data[$index]['insert_excel_duplicate_identifier'] = isset($record['insert_excel_duplicate_identifier']) ? $record['insert_excel_duplicate_identifier'] : '';
     }
 
     return $this->insert_erp_sales($data);
@@ -155,7 +163,14 @@ public function selectall() {
  // Add New Feature
  private function normalize_sales_duplicate_value($value)
  {
-     return strtolower(trim((string) $value));
+     $value = strtolower(trim((string) $value));
+     $value = str_replace(array(',', ' '), '', $value);
+
+     if ($value !== '' && preg_match('/^-?\d+(?:\.\d+)?(?:e[+-]?\d+)?$/i', $value)) {
+         return number_format((float) $value, 0, '.', '');
+     }
+
+     return $value;
  }
 
  private function normalize_sales_duplicate_amount($value)
@@ -172,6 +187,7 @@ public function selectall() {
          'insert_excel_new_ordern' => $this->normalize_sales_duplicate_value(isset($record['insert_excel_new_ordern']) ? $record['insert_excel_new_ordern'] : ''),
          'insert_excel_description' => $this->normalize_sales_duplicate_value(isset($record['insert_excel_description']) ? $record['insert_excel_description'] : ''),
          'insert_excel_product_serial_number' => $this->normalize_sales_duplicate_value(isset($record['insert_excel_product_serial_number']) ? $record['insert_excel_product_serial_number'] : ''),
+         'insert_excel_duplicate_identifier' => $this->normalize_sales_duplicate_value(isset($record['insert_excel_duplicate_identifier']) ? $record['insert_excel_duplicate_identifier'] : ''),
          'insert_excel_uid' => $this->normalize_sales_duplicate_value(isset($record['insert_excel_uid']) ? $record['insert_excel_uid'] : ''),
          'insert_excel_twasel' => $this->normalize_sales_duplicate_amount(isset($record['insert_excel_twasel']) ? $record['insert_excel_twasel'] : 0),
          'insert_excel_electronic' => $this->normalize_sales_duplicate_amount(isset($record['insert_excel_electronic']) ? $record['insert_excel_electronic'] : 0),
@@ -182,6 +198,80 @@ public function selectall() {
      return sha1(json_encode($duplicate_fields));
  }
 
+ private function get_sales_order_values($record)
+ {
+     $orders = array();
+     $order_fields = array('insert_excel_ordern', 'insert_excel_new_ordern');
+
+     foreach ($order_fields as $order_field) {
+         $order = $this->normalize_sales_duplicate_value(isset($record[$order_field]) ? $record[$order_field] : '');
+         if ($order !== '') {
+             $orders[$order] = true;
+         }
+     }
+
+     return array_keys($orders);
+ }
+
+ private function get_sales_identifier_value($record)
+ {
+     return $this->normalize_sales_duplicate_value(isset($record['insert_excel_duplicate_identifier']) ? $record['insert_excel_duplicate_identifier'] : '');
+ }
+
+ private function get_sales_pair_duplicate_keys($record)
+ {
+     $orders = $this->get_sales_order_values($record);
+     $identifier = $this->get_sales_identifier_value($record);
+
+     if (empty($orders) || $identifier === '') {
+         return array();
+     }
+
+     $keys = array();
+     foreach ($orders as $order) {
+         $keys[] = $order . '|' . $identifier;
+     }
+
+     return $keys;
+ }
+
+ private function get_sales_order_user_duplicate_keys($record)
+ {
+     $orders = $this->get_sales_order_values($record);
+     $user_id = $this->normalize_sales_duplicate_value(isset($record['insert_excel_uid']) ? $record['insert_excel_uid'] : '');
+
+     if (empty($orders) || $user_id === '') {
+         return array();
+     }
+
+     $keys = array();
+     foreach ($orders as $order) {
+         $keys[] = $order . '|' . $user_id;
+     }
+
+     return $keys;
+ }
+
+ private function has_any_duplicate_key($keys, $existing_keys)
+ {
+     foreach ($keys as $key) {
+         if (isset($existing_keys[$key])) {
+             return true;
+         }
+     }
+
+     return false;
+ }
+
+ private function should_check_twasel_duplicate_pair($record)
+ {
+     if (isset($record['insert_excel_check_twasel_duplicate'])) {
+         return (string) $record['insert_excel_check_twasel_duplicate'] === '1';
+     }
+
+     return isset($record['insert_excel_twasel']) && (float) $record['insert_excel_twasel'] > 0;
+ }
+
  public function insert_erp_sales($data)
  {
      if (empty($data)) {
@@ -189,26 +279,38 @@ public function selectall() {
      }
 
      $sales_columns = array('insert_excel_twasel', 'insert_excel_jowy', 'insert_excel_quickplus');
-     $lookup_keys = array();
-     foreach ($data as $record) {
-         $lookup_keys[] = $record['insert_excel_uid'] . '|' . $record['insert_excel_date'];
-     }
-     $lookup_keys = array_unique($lookup_keys);
-
-     $existing_records = $this->db->select('insert_excel_uid, insert_excel_date, insert_excel_ordern, insert_excel_new_ordern, insert_excel_description, insert_excel_product_serial_number, insert_excel_twasel, insert_excel_electronic, insert_excel_jowy, insert_excel_quickplus')
+     $existing_records = $this->db->select('insert_excel_uid, insert_excel_date, insert_excel_ordern, insert_excel_new_ordern, insert_excel_description, insert_excel_product_serial_number, insert_excel_duplicate_identifier, insert_excel_twasel, insert_excel_electronic, insert_excel_jowy, insert_excel_quickplus')
                                   ->from($this->table)
-                                  ->where_in("CONCAT(insert_excel_uid, '|', insert_excel_date)", $lookup_keys)
                                   ->get()
                                   ->result_array();
 
      $existing_keys = array();
+     $existing_pair_keys = array();
+     $existing_order_user_fallback_keys = array();
      foreach ($existing_records as $existing_record) {
          $existing_keys[$this->get_sales_duplicate_key($existing_record)] = true;
+
+         if ($this->should_check_twasel_duplicate_pair($existing_record)) {
+             $pair_duplicate_keys = $this->get_sales_pair_duplicate_keys($existing_record);
+             foreach ($pair_duplicate_keys as $pair_duplicate_key) {
+                 $existing_pair_keys[$pair_duplicate_key] = true;
+             }
+
+             if ($this->get_sales_identifier_value($existing_record) === '') {
+                 $order_user_duplicate_keys = $this->get_sales_order_user_duplicate_keys($existing_record);
+                 foreach ($order_user_duplicate_keys as $order_user_duplicate_key) {
+                     $existing_order_user_fallback_keys[$order_user_duplicate_key] = true;
+                 }
+             }
+         }
      }
 
      $incoming_keys = array();
+     $incoming_pair_keys = array();
+     $incoming_order_user_fallback_keys = array();
      $filtered_data = array();
      foreach ($data as $record) {
+         $record['insert_excel_duplicate_identifier'] = isset($record['insert_excel_duplicate_identifier']) ? $record['insert_excel_duplicate_identifier'] : '';
          $record_sales_column = '';
          foreach ($sales_columns as $sales_column) {
              if (isset($record[$sales_column]) && (float) $record[$sales_column] > 0) {
@@ -221,12 +323,43 @@ public function selectall() {
              continue;
          }
 
+         if (!isset($record['insert_excel_check_twasel_duplicate'])) {
+             $record['insert_excel_check_twasel_duplicate'] = ((isset($record['insert_excel_twasel']) && (float) $record['insert_excel_twasel'] > 0) ? '1' : '0');
+         }
+
+         $should_check_pair_duplicate = $this->should_check_twasel_duplicate_pair($record);
          $record_duplicate_key = $this->get_sales_duplicate_key($record);
+         $pair_duplicate_keys = $this->get_sales_pair_duplicate_keys($record);
+         $order_user_duplicate_keys = $this->get_sales_order_user_duplicate_keys($record);
+
          if (isset($existing_keys[$record_duplicate_key]) || isset($incoming_keys[$record_duplicate_key])) {
              continue;
          }
 
+         if ($should_check_pair_duplicate && ($this->has_any_duplicate_key($pair_duplicate_keys, $existing_pair_keys) || $this->has_any_duplicate_key($pair_duplicate_keys, $incoming_pair_keys))) {
+             continue;
+         }
+
+         if ($should_check_pair_duplicate && $this->has_any_duplicate_key($order_user_duplicate_keys, $existing_order_user_fallback_keys)) {
+             continue;
+         }
+
+         if ($should_check_pair_duplicate && empty($pair_duplicate_keys) && $this->has_any_duplicate_key($order_user_duplicate_keys, $incoming_order_user_fallback_keys)) {
+             continue;
+         }
+
          $incoming_keys[$record_duplicate_key] = true;
+         if ($should_check_pair_duplicate && !empty($pair_duplicate_keys)) {
+             foreach ($pair_duplicate_keys as $pair_duplicate_key) {
+                 $incoming_pair_keys[$pair_duplicate_key] = true;
+             }
+         }
+         if ($should_check_pair_duplicate && empty($pair_duplicate_keys)) {
+             foreach ($order_user_duplicate_keys as $order_user_duplicate_key) {
+                 $incoming_order_user_fallback_keys[$order_user_duplicate_key] = true;
+             }
+         }
+         unset($record['insert_excel_check_twasel_duplicate']);
          $filtered_data[] = $record;
      }
 

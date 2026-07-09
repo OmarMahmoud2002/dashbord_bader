@@ -109,6 +109,11 @@ class Excel_import extends CI_Controller
      return '';
      // End
  }
+
+ private function isErpTwaselOrderSource($salesType)
+ {
+     return strtolower(trim((string) $salesType)) === 'stc siebel retail stores';
+ }
  // End
 
  
@@ -171,7 +176,8 @@ function import()
                     if ($status === 'Complete') {
                         $insert_excel_uid = $this->getTrimmedCellValue($worksheet, 17, $row);
                         $insert_excel_date = $this->getExcelDateString($worksheet, 0, $row);
-                        $insert_excel_ordern = $this->getTrimmedCellValue($worksheet, 1, $row);
+                        $insert_excel_ordern = $this->getIdentifierCellValue($worksheet, 1, $row);
+                        $insert_excel_duplicate_identifier = $this->normalizeIdentifierValue($insert_excel_uid);
 
                         // Add New Feature
                         $insert_excel_new_ordern = $this->getTrimmedCellValue($worksheet, 5, $row);
@@ -192,7 +198,8 @@ function import()
                                 // Add New Feature
                                 'insert_excel_new_ordern' => $insert_excel_new_ordern,
                                 'insert_excel_description' => $insert_excel_description,
-                                'insert_excel_product_serial_number' => $insert_excel_product_serial_number
+                                'insert_excel_product_serial_number' => $insert_excel_product_serial_number,
+                                'insert_excel_duplicate_identifier' => $insert_excel_duplicate_identifier
                                 // End
                             );
                         }
@@ -260,10 +267,10 @@ function import_erp()
 
                     // Add New Feature
                     $insert_excel_uid = $this->getIdentifierCellValue($worksheet, 3, $row);
+                    $insert_excel_duplicate_identifier = $this->getIdentifierCellValue($worksheet, 20, $row);
                     $c_user_name = $this->Model_admin->get_user_by_uid($insert_excel_uid);
                     if (!$c_user_name) {
-                        $insert_excel_uid = $this->getIdentifierCellValue($worksheet, 20, $row);
-                        $c_user_name = $this->Model_admin->get_user_by_uid($insert_excel_uid);
+                        $c_user_name = $this->Model_admin->get_user_by_uid($insert_excel_duplicate_identifier);
                     }
                     // End
 
@@ -292,6 +299,8 @@ function import_erp()
                         'insert_excel_new_ordern' => $insert_excel_ordern,
                         'insert_excel_description' => $insert_excel_description,
                         'insert_excel_product_serial_number' => $insert_excel_product_serial_number,
+                        'insert_excel_duplicate_identifier' => $insert_excel_duplicate_identifier,
+                        'insert_excel_check_twasel_duplicate' => $this->isErpTwaselOrderSource($sales_type) ? '1' : '0',
                         'insert_excel_twasel' => '0',
                         'insert_excel_electronic' => '0',
                         'insert_excel_jowy' => '0',

@@ -35,6 +35,7 @@ CREATE TABLE `tbl_insert_excel` (
   `insert_excel_new_ordern` varchar(120) NOT NULL DEFAULT '',
   `insert_excel_description` varchar(255) NOT NULL DEFAULT '',
   `insert_excel_product_serial_number` varchar(255) NOT NULL DEFAULT '',
+  `insert_excel_duplicate_identifier` varchar(120) NOT NULL DEFAULT '',
   -- End
   `insert_excel_uid` int(11) NOT NULL,
   `insert_excel_twasel` varchar(120) NOT NULL,
